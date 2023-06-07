@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.dado {
+  width: 100px;
+  height: 100px;
+  margin-right: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.dado:hover {
+  transform: rotate(180deg);
+}
+
+.dado.rolling {
+  animation: rollDice 0.3s infinite linear;
+}
+
+.dado-guardado {
+  width: 65px;
+  height: 65px;
+  margin-right: 5px;
+}
+
+@keyframes rollDice {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+
+
+}
