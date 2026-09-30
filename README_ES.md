@@ -148,7 +148,7 @@ docker run -p 3001:3001 -e DB_HOST=<host-mysql> -e DB_USER=<usuario> -e DB_PASSW
 
 **Coolify**, de una de estas dos formas:
 
-- **Build pack Docker Compose** (la aplicación y MySQL en un solo recurso): crea una aplicación a partir de este repositorio con el build pack **Docker Compose**, pon `DB_PASSWORD` en Environment Variables y asigna al servicio `app` un dominio con su puerto interno, por ejemplo `https://dado.ejemplo.com:3001`. Las copias de seguridad programadas de Coolify están pensadas para los recursos de base de datos independientes: comprueba si te las ofrece para este MySQL o haz tú las del volumen `mysql-datos`.
+- **Build pack Docker Compose** (la aplicación y MySQL en un solo recurso): crea una aplicación a partir de este repositorio con el build pack **Docker Compose**, pon `DB_PASSWORD` en Environment Variables (no hace falta para compilar, así que puede ser una variable solo de runtime) y asigna al servicio `app` un dominio con su puerto interno, por ejemplo `https://dado.ejemplo.com:3001`. Las copias de seguridad programadas de Coolify están pensadas para los recursos de base de datos independientes: comprueba si te las ofrece para este MySQL o haz tú las del volumen `mysql-datos`.
 - **Build pack Dockerfile** con una base de datos aparte:
   1. Crea un recurso **MySQL 8** (no necesita acceso público) y apunta su host interno, usuario, contraseña y base de datos.
   2. Crea una aplicación a partir de este repositorio con el build pack **Dockerfile** y **Ports Exposes** a `3001`.

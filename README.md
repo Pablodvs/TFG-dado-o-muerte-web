@@ -148,7 +148,7 @@ docker run -p 3001:3001 -e DB_HOST=<mysql-host> -e DB_USER=<user> -e DB_PASSWORD
 
 **Coolify**, in one of two ways:
 
-- **Docker Compose build pack** (app and MySQL in one resource): create an application from this repository with the **Docker Compose** build pack, set `DB_PASSWORD` under Environment Variables and give the `app` service a domain that includes its internal port, for example `https://dado.example.com:3001`. Coolify's scheduled backups are meant for standalone database resources: check whether it offers them for this MySQL, or back up the `mysql-datos` volume yourself.
+- **Docker Compose build pack** (app and MySQL in one resource): create an application from this repository with the **Docker Compose** build pack, set `DB_PASSWORD` under Environment Variables (it is not needed to build, so it can be a runtime-only variable) and give the `app` service a domain that includes its internal port, for example `https://dado.example.com:3001`. Coolify's scheduled backups are meant for standalone database resources: check whether it offers them for this MySQL, or back up the `mysql-datos` volume yourself.
 - **Dockerfile build pack** with a separate database:
   1. Create a **MySQL 8** resource (it does not need public access) and note its internal host, user, password and database.
   2. Create an application from this repository with the **Dockerfile** build pack and **Ports Exposes** set to `3001`.

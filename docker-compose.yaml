@@ -1,5 +1,7 @@
 # Dice or Die con su propio MySQL, para el build pack "Docker Compose" de Coolify o para local.
 # Pide DB_PASSWORD (en Coolify, en Environment Variables; en local, en un .env junto a este fichero).
+# No se marca como obligatoria (con ":?") porque Coolify compila con solo las variables de build,
+# y así la contraseña, que no hace falta para compilar, puede quedarse solo en runtime.
 # No publica puertos: en Coolify el dominio se asigna al servicio "app" con el puerto interno
 # (https://dado.ejemplo.com:3001); en local se publica con un docker-compose.override.yaml (ver README).
 services:
@@ -10,7 +12,7 @@ services:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_USER: ${DB_USER:-dado}
-      DB_PASSWORD: ${DB_PASSWORD:?}
+      DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME:-dado-o-muerte}
     depends_on:
       mysql:
@@ -22,7 +24,7 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_NAME:-dado-o-muerte}
       MYSQL_USER: ${DB_USER:-dado}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
       # La app no usa root: se genera una contraseña aleatoria (sale en el log del primer arranque)
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
     volumes:
