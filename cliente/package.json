@@ -4,6 +4,7 @@
   "description": "Cliente web de Dice or Die (React + Vite)",
   "private": true,
   "type": "module",
+  "author": "Pablo Diez de Velasco",
   "license": "MIT",
   "engines": {
     "node": ">=22.12"
