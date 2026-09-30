@@ -1,6 +1,7 @@
-# Dice or Die con su propio MySQL. Sirve para el build pack "Docker Compose" de Coolify
-# y para arrancarlo en local (docker compose up, con DB_PASSWORD en un .env junto a este fichero).
-# En Coolify el dominio se asigna al servicio "app" con el puerto interno: https://dado.ejemplo.com:3001
+# Dice or Die con su propio MySQL, para el build pack "Docker Compose" de Coolify o para local.
+# Pide DB_PASSWORD (en Coolify, en Environment Variables; en local, en un .env junto a este fichero).
+# No publica puertos: en Coolify el dominio se asigna al servicio "app" con el puerto interno
+# (https://dado.ejemplo.com:3001); en local se publica con un docker-compose.override.yaml (ver README).
 services:
   app:
     build: .

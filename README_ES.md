@@ -124,21 +124,41 @@ Si no funciona:
 
 ## Despliegue con Docker / Coolify
 
-El `Dockerfile` de la raíz compila el cliente y arranca el servidor, que sirve la API y la aplicación en el puerto 3001. Al arrancar crea las tablas si no existen (se puede repetir sin problema) y espera hasta un minuto a que MySQL esté listo.
+El `Dockerfile` de la raíz compila el cliente y arranca el servidor, que sirve la API y la aplicación en el puerto 3001. Al arrancar crea las tablas si no existen (se puede repetir sin problema) y espera hasta un minuto a que MySQL esté listo. `docker-compose.yaml` lo arranca junto con su propio MySQL.
+
+**Docker Compose** (la aplicación y MySQL juntos): pon `DB_PASSWORD=<contraseña>` en un fichero `.env` junto a `docker-compose.yaml`. `DB_USER` y `DB_NAME` valen por defecto `dado` y `dado-o-muerte`, y los datos se guardan en el volumen `mysql-datos`. El compose no publica ningún puerto (en Coolify llega el proxy), así que para abrirlo en local en `http://localhost:3001` crea a su lado un `docker-compose.override.yaml`, que Compose carga solo:
+
+```yaml
+services:
+  app:
+    ports:
+      - "3001:3001"
+```
+
+```bash
+docker compose up -d --build
+```
+
+**Solo la imagen**, con tu propio MySQL:
 
 ```bash
 docker build -t dado-o-muerte .
 docker run -p 3001:3001 -e DB_HOST=<host-mysql> -e DB_USER=<usuario> -e DB_PASSWORD=<contraseña> -e DB_NAME=<base-de-datos> dado-o-muerte
 ```
 
-**Coolify** detrás de un Cloudflare Tunnel:
+**Coolify**, de una de estas dos formas:
 
-1. Crea un recurso **MySQL 8** (no necesita acceso público) y apunta su host interno, usuario, contraseña y base de datos.
-2. Crea una aplicación a partir de este repositorio con el build pack **Dockerfile** y **Ports Exposes** a `3001`.
-3. Añade las variables `DB_HOST` (el host interno de la base de datos), `DB_PORT` (`3306`), `DB_USER`, `DB_PASSWORD` y `DB_NAME`.
-4. Pon el dominio, por ejemplo `https://dado.ejemplo.com`. La imagen ya trae un health check sobre `/api/health`.
-5. En Cloudflare, añade al túnel un public hostname con ese dominio y el servicio `http://localhost:80` (el proxy de Coolify). Si `cloudflared` corre en un contenedor, `localhost` es el propio contenedor: conéctalo a la red `coolify` y usa `http://coolify-proxy:80`.
-6. Desactiva en Coolify la redirección de HTTP a HTTPS de la aplicación. El HTTPS ya lo pone Cloudflare y el túnel habla HTTP con Coolify, así que si la dejas activa obtendrás `TOO_MANY_REDIRECTS`.
+- **Build pack Docker Compose** (la aplicación y MySQL en un solo recurso): crea una aplicación a partir de este repositorio con el build pack **Docker Compose**, pon `DB_PASSWORD` en Environment Variables y asigna al servicio `app` un dominio con su puerto interno, por ejemplo `https://dado.ejemplo.com:3001`. Las copias de seguridad programadas de Coolify están pensadas para los recursos de base de datos independientes: comprueba si te las ofrece para este MySQL o haz tú las del volumen `mysql-datos`.
+- **Build pack Dockerfile** con una base de datos aparte:
+  1. Crea un recurso **MySQL 8** (no necesita acceso público) y apunta su host interno, usuario, contraseña y base de datos.
+  2. Crea una aplicación a partir de este repositorio con el build pack **Dockerfile** y **Ports Exposes** a `3001`.
+  3. Añade las variables `DB_HOST` (el host interno de la base de datos), `DB_PORT` (`3306`), `DB_USER`, `DB_PASSWORD` y `DB_NAME`.
+  4. Pon el dominio, por ejemplo `https://dado.ejemplo.com`. La imagen ya trae un health check sobre `/api/health`.
+
+**Cloudflare Tunnel** (en los dos casos):
+
+1. Añade al túnel un public hostname con ese dominio y el servicio `http://localhost:80` (el proxy de Coolify). Si `cloudflared` corre en un contenedor, `localhost` es el propio contenedor: conéctalo a la red `coolify` y usa `http://coolify-proxy:80`.
+2. Desactiva en Coolify la redirección de HTTP a HTTPS de la aplicación. El HTTPS ya lo pone Cloudflare y el túnel habla HTTP con Coolify, así que si la dejas activa obtendrás `TOO_MANY_REDIRECTS`.
 
 ## Variables de entorno
 
@@ -166,6 +186,7 @@ cd cliente && npm test     # Jest + React Testing Library (modo watch)
 
 ```
 Dockerfile           imagen de producción (compila el cliente y arranca el servidor)
+docker-compose.yaml  aplicación + MySQL para Docker Compose / Coolify
 servidor/
   index.js           punto de entrada (muestra las URL de red local)
   app.js             aplicación Express, rutas, sirve cliente/build
