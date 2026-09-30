@@ -1,20 +1,27 @@
 {
   "name": "servidor",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0.0",
+  "description": "API de Dado o muerte (Express + MySQL)",
   "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node index.js",
-    "devStart": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js",
+    "test": "node --test",
+    "db:init": "node db/init.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "mysql": "^2.18.1",
-    "nodemon": "^2.0.22"
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
