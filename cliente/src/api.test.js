@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { crearPartida, describirError, obtenerPartida, plantarse, textoError } from './api';
 import i18n from './i18n';
-import { errorDeRed, errorHttp, estadoPartida } from './test-utils';
+import { errorDeRed, errorHttp, estadoPartida, ID_PARTIDA } from './test-utils';
 
 vi.mock('axios', () => {
     const instancia = { get: vi.fn(), post: vi.fn() };
@@ -13,9 +13,9 @@ const { instancia } = axios;
 test('plantarse envía jugadorId, ronda, dados y tiradas', async () => {
     instancia.post.mockResolvedValue({ data: { partida: estadoPartida(), rondaTerminada: null } });
 
-    const resultado = await plantarse(12, { jugadorId: 5, ronda: 3, dados: [2, 2, 5, 5, 5], tiradas: 2 });
+    const resultado = await plantarse(ID_PARTIDA, { jugadorId: 5, ronda: 3, dados: [2, 2, 5, 5, 5], tiradas: 2 });
 
-    expect(instancia.post).toHaveBeenCalledWith('/api/partidas/12/plantarse', {
+    expect(instancia.post).toHaveBeenCalledWith(`/api/partidas/${ID_PARTIDA}/plantarse`, {
         jugadorId: 5,
         ronda: 3,
         dados: [2, 2, 5, 5, 5],
@@ -34,7 +34,7 @@ test('crearPartida envía los nombres y devuelve la partida', async () => {
 test('una respuesta que no es un EstadoPartida se trata como fallo de conexión', async () => {
     instancia.get.mockResolvedValue({ data: '<!doctype html>' });
 
-    const error = await obtenerPartida(12).catch(e => e);
+    const error = await obtenerPartida(ID_PARTIDA).catch(e => e);
 
     expect(describirError(error)).toEqual({ status: null, codigo: 'respuestaInesperada', mensaje: null });
 });

@@ -25,10 +25,14 @@ export function jugador(id, nombre, orden, extra = {}) {
     return { id, nombre, vidas: 3, orden, haJugado: false, puntuacion: null, dados: null, ...extra };
 }
 
+// Ids públicos de ejemplo, con el formato que genera el servidor
+export const ID_PARTIDA = 'k3Vq9mTz2LpR8wNa1bC0dQ';
+export const OTRA_PARTIDA = 'Zp7Lr0Xc4Vb6Nm1Qw9Es2T';
+
 // EstadoPartida de ejemplo: Ana abre la ronda 1 contra Luis
 export function estadoPartida(extra = {}) {
     return {
-        id: 12,
+        id: ID_PARTIDA,
         ronda: 1,
         turno: 0,
         tiradaMax: null,

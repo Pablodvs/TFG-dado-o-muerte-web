@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import * as api from '../api';
 import { leerPartidaId } from '../lib/almacen';
-import { errorHttp, estadoPartida, nombresDe, renderApp } from '../test-utils';
+import { errorHttp, estadoPartida, ID_PARTIDA, nombresDe, OTRA_PARTIDA, renderApp } from '../test-utils';
 
 vi.mock('../api', async (importOriginal) => ({
     ...(await importOriginal()),
@@ -86,7 +86,7 @@ test('empezar crea la partida y va a la pantalla de juego', async () => {
 
     expect(await screen.findByText('Toca para empezar')).toBeInTheDocument();
     expect(api.crearPartida).toHaveBeenCalledWith(['Ana', 'Luis']);
-    expect(leerPartidaId()).toBe(12);
+    expect(leerPartidaId()).toBe(ID_PARTIDA);
 });
 
 test('muestra el error si no se puede crear la partida', async () => {
@@ -101,7 +101,7 @@ test('muestra el error si no se puede crear la partida', async () => {
 });
 
 test('ofrece continuar la partida guardada', async () => {
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
     api.obtenerPartida.mockResolvedValue(estadoPartida({ ronda: 3 }));
     renderApp('/');
 
@@ -110,7 +110,7 @@ test('ofrece continuar la partida guardada', async () => {
 });
 
 test('no ofrece continuar una partida terminada, ni mientras se carga', async () => {
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
     api.obtenerPartida.mockResolvedValue(estadoPartida({ finalizada: true, perdedor: { id: 6, nombre: 'Luis' } }));
     const { store } = renderApp('/');
 
@@ -122,9 +122,9 @@ test('no ofrece continuar una partida terminada, ni mientras se carga', async ()
 });
 
 test('antes de sustituir una partida guardada pide confirmación', async () => {
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
     api.obtenerPartida.mockResolvedValue(estadoPartida({ ronda: 3 }));
-    api.crearPartida.mockResolvedValue(estadoPartida({ id: 13 }));
+    api.crearPartida.mockResolvedValue(estadoPartida({ id: OTRA_PARTIDA }));
     renderApp('/');
     await screen.findByText('Ronda 3 · Ana, Luis');
     anadir('Eva');
@@ -138,12 +138,12 @@ test('antes de sustituir una partida guardada pide confirmación', async () => {
     // Cancelar deja todo como estaba
     fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(screen.getByRole('button', { name: 'Empezar partida' })).toHaveFocus();
-    expect(leerPartidaId()).toBe(12);
+    expect(leerPartidaId()).toBe(ID_PARTIDA);
 
     fireEvent.click(screen.getByRole('button', { name: 'Empezar partida' }));
     fireEvent.click(screen.getByRole('button', { name: 'Sí, empezar otra' }));
 
     expect(await screen.findByText('Toca para empezar')).toBeInTheDocument();
     expect(api.crearPartida).toHaveBeenCalledWith(['Eva', 'Pablo']);
-    expect(leerPartidaId()).toBe(13);
+    expect(leerPartidaId()).toBe(OTRA_PARTIDA);
 });

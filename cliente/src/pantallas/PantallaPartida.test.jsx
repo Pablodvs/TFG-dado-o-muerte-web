@@ -8,6 +8,7 @@ import {
     errorDeRed,
     errorHttp,
     estadoPartida,
+    ID_PARTIDA,
     jugador,
     prepararDados,
     renderApp,
@@ -22,7 +23,7 @@ vi.mock('../api', async (importOriginal) => ({
 
 beforeEach(() => {
     localStorage.clear();
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
     vi.useFakeTimers();
 });
 
@@ -93,7 +94,7 @@ test('antes de cada turno pide pasar el móvil', async () => {
     expect(actual).toHaveLength(1);
     expect(actual[0]).toHaveTextContent('Ana');
     expect(screen.getByText('Nadie ha jugado todavía en esta ronda.')).toBeInTheDocument();
-    expect(api.obtenerPartida).toHaveBeenCalledWith(12);
+    expect(api.obtenerPartida).toHaveBeenCalledWith(ID_PARTIDA);
 });
 
 test('un turno completo: tirar, guardar, volver a tirar y plantarse con los 5 dados', async () => {
@@ -128,7 +129,7 @@ test('un turno completo: tirar, guardar, volver a tirar y plantarse con los 5 da
     // Tras plantarse, el móvil pasa a Luis, que tiene las tiradas que usó Ana
     const aviso = await screen.findByRole('button', { name: /Turno de\s*Luis/ });
     expect(aviso).toHaveTextContent('Tienes 2 tiradas.');
-    expect(api.plantarse).toHaveBeenCalledWith(12, { jugadorId: 5, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 2 });
+    expect(api.plantarse).toHaveBeenCalledWith(ID_PARTIDA, { jugadorId: 5, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 2 });
     expect(localStorage.getItem('dadoOMuerte:turno')).toBeNull();
     const peor = screen.getByRole('region', { name: 'Tirada a superar' });
     expect(peor).toHaveTextContent('Ana: Trío de 5');

@@ -196,6 +196,7 @@
     "noEsSuTurno": "It's not this player's turn.",
     "demasiadasTiradas": "You rolled more times than this round allows.",
     "sinBaseDeDatos": "There's no connection to the database.",
+    "demasiadasPartidas": "Too many games have been created from this connection. Wait a few minutes and try again.",
     "rutaNoEncontrada": "Route not found.",
     "jsonNoValido": "The request body isn't valid JSON.",
     "peticionNoValida": "Invalid request.",

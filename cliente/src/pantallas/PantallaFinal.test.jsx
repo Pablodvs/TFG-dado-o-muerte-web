@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import * as api from '../api';
 import { leerPartidaId } from '../lib/almacen';
-import { estadoPartida, jugador, nombresDe, renderApp } from '../test-utils';
+import { estadoPartida, ID_PARTIDA, jugador, nombresDe, OTRA_PARTIDA, renderApp } from '../test-utils';
 
 vi.mock('../api', async (importOriginal) => ({
     ...(await importOriginal()),
@@ -24,7 +24,7 @@ const terminada = estadoPartida({
 
 beforeEach(() => {
     localStorage.clear();
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
 });
 
 // Los botones no responden hasta un instante después de aparecer (doble toque)
@@ -50,14 +50,14 @@ test('la ruta antigua /pantalla-final lleva a /fin', async () => {
 
 test('revancha crea una partida nueva con los mismos nombres', async () => {
     api.obtenerPartida.mockResolvedValue(terminada);
-    api.crearPartida.mockResolvedValue(estadoPartida({ id: 13 }));
+    api.crearPartida.mockResolvedValue(estadoPartida({ id: OTRA_PARTIDA }));
     renderApp('/fin');
 
     fireEvent.click(await botonArmado('Revancha'));
 
     expect(await screen.findByText('Toca para empezar')).toBeInTheDocument();
     expect(api.crearPartida).toHaveBeenCalledWith(['Luis', 'Eva', 'Ana']);
-    expect(leerPartidaId()).toBe(13);
+    expect(leerPartidaId()).toBe(OTRA_PARTIDA);
 });
 
 test('menú principal olvida la partida', async () => {

@@ -3,15 +3,17 @@
 const { test, after, mock } = require('node:test')
 const assert = require('node:assert/strict')
 const http = require('node:http')
-const app = require('../app')
+const { crearApp } = require('../app')
 const { pool } = require('../db')
+
+const app = crearApp()
 
 let servidor
 const partidasCreadas = []
 
 after(async () => {
   if (partidasCreadas.length > 0) {
-    await pool.query('DELETE FROM partida WHERE id IN (?)', [partidasCreadas]).catch(() => {})
+    await pool.query('DELETE FROM partida WHERE id_publico IN (?)', [partidasCreadas]).catch(() => {})
   }
   servidor?.close()
   await pool.end()
@@ -115,11 +117,21 @@ test('API HTTP con MySQL', async (t) => {
     assert.deepEqual(res.body, partida)
   })
 
+  await t.test('cada partida tiene un id público aleatorio, no uno correlativo', async () => {
+    const a = await nuevaPartida(['Ana', 'Luis'])
+    const b = await nuevaPartida(['Ana', 'Luis'])
+    for (const { id } of [a, b]) assert.match(id, /^[A-Za-z0-9_-]{22}$/)
+    assert.notEqual(a.id, b.id)
+    // El id interno (numérico) ya no sirve para llegar a la partida
+    const [[{ id: interno }]] = await pool.query('SELECT id FROM partida WHERE id_publico = ?', [a.id])
+    assertError(await peticion('GET', `/api/partidas/${interno}`), 400)
+  })
+
   await t.test('GET /api/partidas/:id devuelve 400 o 404', async () => {
-    for (const id of ['abc', '0', '-1', '1.5', '1e3']) {
-      assertError(await peticion('GET', `/api/partidas/${id}`), 400)
+    for (const id of ['abc', '0', '1.5', '12345', 'k3Vq9mTz2LpR8wNa1bC0d!', 'k3Vq9mTz2LpR8wNa1bC0dQx']) {
+      assertError(await peticion('GET', `/api/partidas/${encodeURIComponent(id)}`), 400)
     }
-    assertError(await peticion('GET', '/api/partidas/999999999'), 404)
+    assertError(await peticion('GET', '/api/partidas/AAAAAAAAAAAAAAAAAAAAAA'), 404)
   })
 
   await t.test('plantarse valida la jugada y el turno', async () => {
@@ -142,7 +154,7 @@ test('API HTTP con MySQL', async (t) => {
     }
     assertError(await peticion('POST', ruta), 400)
     assertError(await peticion('POST', '/api/partidas/abc/plantarse', valida), 400)
-    assertError(await peticion('POST', '/api/partidas/999999999/plantarse', valida), 404)
+    assertError(await peticion('POST', '/api/partidas/AAAAAAAAAAAAAAAAAAAAAA/plantarse', valida), 404)
     assertError(await peticion('POST', ruta, { ...valida, jugadorId: luis.id }), 409)
     assertError(await peticion('POST', ruta, { ...valida, jugadorId: 999999999 }), 409)
     const rondaVieja = await peticion('POST', ruta, { ...valida, ronda: 2 })
@@ -201,7 +213,8 @@ test('API HTTP con MySQL', async (t) => {
     assert.deepEqual(partida.jugadorActual, { id: eva.id, nombre: 'Eva', vidas: 2 })
 
     const [filas] = await pool.query(
-      'SELECT puntuacion, dados_guardados FROM jugadores WHERE partida_id = ?', [partida.id],
+      `SELECT j.puntuacion, j.dados_guardados FROM jugadores j
+         JOIN partida p ON p.id = j.partida_id WHERE p.id_publico = ?`, [partida.id],
     )
     assert.ok(filas.every((f) => f.puntuacion === null && f.dados_guardados === null))
   })

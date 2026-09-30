@@ -1,7 +1,7 @@
 import * as api from '../api';
 import { claveTurno, guardarTurno, leerPartidaId, leerTurno } from '../lib/almacen';
 import { crearStore } from '../store';
-import { errorDeRed, errorHttp, estadoPartida, jugador } from '../test-utils';
+import { errorDeRed, errorHttp, estadoPartida, ID_PARTIDA, jugador, OTRA_PARTIDA } from '../test-utils';
 import {
     cargarPartida,
     cerrarResumenRonda,
@@ -40,9 +40,9 @@ test('crearPartida guarda el estado y el id', async () => {
     await store.dispatch(crearPartida(['Ana', 'Luis']));
 
     expect(api.crearPartida).toHaveBeenCalledWith(['Ana', 'Luis']);
-    expect(store.getState().partida.estado.id).toBe(12);
+    expect(store.getState().partida.estado.id).toBe(ID_PARTIDA);
     expect(store.getState().partida.creando).toBe(false);
-    expect(leerPartidaId()).toBe(12);
+    expect(leerPartidaId()).toBe(ID_PARTIDA);
 });
 
 test('crearPartida guarda el mensaje del servidor si falla', async () => {
@@ -56,37 +56,37 @@ test('crearPartida guarda el mensaje del servidor si falla', async () => {
 });
 
 test('cargarPartida con 404 olvida la partida guardada', async () => {
-    localStorage.setItem('dadoOMuerte:partidaId', '99');
+    localStorage.setItem('dadoOMuerte:partidaId', OTRA_PARTIDA);
     api.obtenerPartida.mockRejectedValue(errorHttp(404, 'Partida no encontrada'));
     const store = crearStore();
 
-    await store.dispatch(cargarPartida(99));
+    await store.dispatch(cargarPartida(OTRA_PARTIDA));
 
     expect(store.getState().partida.errorCarga).toEqual({ status: 404, codigo: null, mensaje: 'Partida no encontrada' });
     expect(leerPartidaId()).toBeNull();
 });
 
 test('cargarPartida sin conexión conserva la partida guardada', async () => {
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
     api.obtenerPartida.mockRejectedValue(errorDeRed());
     const store = crearStore();
 
-    await store.dispatch(cargarPartida(12));
+    await store.dispatch(cargarPartida(ID_PARTIDA));
 
     expect(store.getState().partida.errorCarga.status).toBeNull();
     expect(store.getState().partida.errorCarga.codigo).toBe('sinConexion');
-    expect(leerPartidaId()).toBe(12);
+    expect(leerPartidaId()).toBe(ID_PARTIDA);
 });
 
 test('plantarse envía la jugada, borra el turno guardado y avanza', async () => {
     api.plantarse.mockResolvedValue({ partida: trasAna, rondaTerminada: null });
     const store = crearStore({ partida: { ...crearStore().getState().partida, estado: estadoPartida() } });
-    const clave = claveTurno(12, 1, 5);
+    const clave = claveTurno(ID_PARTIDA, 1, 5);
     guardarTurno(clave, { dados: [2, 2, 5, 5, 5].map(valor => ({ valor, guardado: false })), tirada: 2 });
 
     await store.dispatch(plantarse({ jugadorId: 5, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 2 }));
 
-    expect(api.plantarse).toHaveBeenCalledWith(12, { jugadorId: 5, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 2 });
+    expect(api.plantarse).toHaveBeenCalledWith(ID_PARTIDA, { jugadorId: 5, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 2 });
     expect(leerTurno(clave)).toBeNull();
     const { estado, enviando, rondaTerminada } = store.getState().partida;
     expect(enviando).toBe(false);
@@ -101,7 +101,7 @@ test('plantarse envía la ronda que se está jugando', async () => {
 
     await store.dispatch(plantarse({ jugadorId: 5, dados: [1, 1, 3, 4, 4], tiradas: 3 }));
 
-    expect(api.plantarse).toHaveBeenCalledWith(12, { jugadorId: 5, ronda: 4, dados: [1, 1, 3, 4, 4], tiradas: 3 });
+    expect(api.plantarse).toHaveBeenCalledWith(ID_PARTIDA, { jugadorId: 5, ronda: 4, dados: [1, 1, 3, 4, 4], tiradas: 3 });
 });
 
 test('plantarse con 409 recarga la partida sin mostrar error', async () => {
@@ -113,7 +113,7 @@ test('plantarse con 409 recarga la partida sin mostrar error', async () => {
     expect(store.getState().partida.enviando).toBe(true);
     await envio;
 
-    expect(api.obtenerPartida).toHaveBeenCalledWith(12);
+    expect(api.obtenerPartida).toHaveBeenCalledWith(ID_PARTIDA);
     const { estado, enviando, errorJugada } = store.getState().partida;
     expect(estado.turno).toBe(1);
     expect(enviando).toBe(false);
@@ -173,7 +173,7 @@ test('el resumen de ronda se guarda hasta cerrarlo', async () => {
 });
 
 test('salirDePartida olvida la partida', () => {
-    localStorage.setItem('dadoOMuerte:partidaId', '12');
+    localStorage.setItem('dadoOMuerte:partidaId', ID_PARTIDA);
     const store = crearStore({ partida: { ...crearStore().getState().partida, estado: estadoPartida() } });
 
     store.dispatch(salirDePartida());
@@ -195,6 +195,6 @@ describe('derivados del estado', () => {
     });
 
     test('la clave del turno combina partida, ronda y jugador', () => {
-        expect(claveTurnoDe(trasAna)).toBe('12:1:6');
+        expect(claveTurnoDe(trasAna)).toBe(`${ID_PARTIDA}:1:6`);
     });
 });

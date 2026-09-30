@@ -1,6 +1,7 @@
 const express = require('express')
 const { pool, enTransaccion } = require('./db')
 const { ErrorHttp } = require('./errores')
+const { esIdPublico, nuevoIdPublico } = require('./idPublico')
 const { puntuar, peorMano } = require('./puntuacion')
 
 const VIDAS_INICIALES = 3
@@ -15,9 +16,8 @@ function esIdValido(valor) {
 }
 
 function validarIdPartida(texto) {
-  const id = /^\d+$/.test(texto) ? Number(texto) : NaN
-  if (!esIdValido(id)) throw new ErrorHttp(400, 'Identificador de partida no válido', 'idPartidaNoValido')
-  return id
+  if (!esIdPublico(texto)) throw new ErrorHttp(400, 'Identificador de partida no válido', 'idPartidaNoValido')
+  return texto
 }
 
 function validarNombres(jugadores) {
@@ -56,24 +56,26 @@ function validarJugada(cuerpo) {
 // Acceso a datos y lógica de juego
 // ---------------------------------------------------------------------------
 
-// Lee la partida y sus jugadores (ordenados por turno) en una sola consulta.
-// Con bloquear = true las filas quedan bloqueadas hasta el fin de la transacción.
-async function leerPartida(conexion, id, { bloquear = false } = {}) {
+// Lee la partida (por su id público) y sus jugadores, ordenados por turno, en una sola
+// consulta. Con bloquear = true las filas quedan bloqueadas hasta el fin de la transacción.
+// id es la clave interna, para las actualizaciones; idPublico, el que ve la API.
+async function leerPartida(conexion, idPublico, { bloquear = false } = {}) {
   const [filas] = await conexion.query(
-    `SELECT p.turno, p.tirada_max, p.ronda, p.finalizada,
+    `SELECT p.id, p.turno, p.tirada_max, p.ronda, p.finalizada,
             j.id AS jugador_id, j.nombre, j.vidas, j.orden, j.puntuacion, j.dados_guardados
        FROM partida p
        LEFT JOIN jugadores j ON j.partida_id = p.id
-      WHERE p.id = ?
+      WHERE p.id_publico = ?
       ORDER BY j.orden
       ${bloquear ? 'FOR UPDATE' : ''}`,
-    [id],
+    [idPublico],
   )
   if (filas.length === 0) return null
 
-  const [{ turno, tirada_max: tiradaMax, ronda, finalizada }] = filas
+  const [{ id, turno, tirada_max: tiradaMax, ronda, finalizada }] = filas
   return {
     id,
+    idPublico,
     turno,
     tiradaMax,
     ronda,
@@ -110,7 +112,7 @@ function estadoPartida(partida) {
   const peor = peorMano(jugadores.filter((jugador) => jugador.haJugado))
 
   return {
-    id: partida.id,
+    id: partida.idPublico,
     ronda: partida.ronda,
     turno: partida.turno,
     tiradaMax: partida.tiradaMax,
@@ -126,14 +128,15 @@ function estadoPartida(partida) {
 
 function crearPartida(nombres) {
   return enTransaccion(async (conexion) => {
-    const [{ insertId: id }] = await conexion.query('INSERT INTO partida (turno) VALUES (0)')
+    const idPublico = nuevoIdPublico()
+    const [{ insertId: id }] = await conexion.query('INSERT INTO partida (id_publico, turno) VALUES (?, 0)', [idPublico])
     // Un jugador al azar empieza (orden 1) y el resto le sigue en el orden en que se introdujeron
     const primero = Math.floor(Math.random() * nombres.length)
     const filas = nombres.map((_, i) => [
       nombres[(primero + i) % nombres.length], VIDAS_INICIALES, i + 1, id,
     ])
     await conexion.query('INSERT INTO jugadores (nombre, vidas, orden, partida_id) VALUES ?', [filas])
-    return estadoPartida(await leerPartida(conexion, id))
+    return estadoPartida(await leerPartida(conexion, idPublico))
   })
 }
 
@@ -169,10 +172,10 @@ async function terminarRonda(conexion, partida) {
   }
 }
 
-function plantarse(partidaId, { jugadorId, ronda, dados, tiradas }) {
+function plantarse(idPublico, { jugadorId, ronda, dados, tiradas }) {
   return enTransaccion(async (conexion) => {
     // FOR UPDATE: dos peticiones simultáneas se procesan una detrás de otra
-    const partida = await leerPartida(conexion, partidaId, { bloquear: true })
+    const partida = await leerPartida(conexion, idPublico, { bloquear: true })
     if (!partida) throw new ErrorHttp(404, 'La partida no existe', 'partidaNoExiste')
     if (partida.finalizada) throw new ErrorHttp(409, 'La partida ya ha terminado', 'partidaTerminada')
     // Una petición repetida del último jugador de la ronda llegaría cuando ya empezó la
@@ -207,13 +210,13 @@ function plantarse(partidaId, { jugadorId, ronda, dados, tiradas }) {
       const nuevaTiradaMax = partida.turno === 0 ? tiradas : partida.tiradaMax
       await conexion.query(
         'UPDATE partida SET turno = turno + 1, tirada_max = ? WHERE id = ?',
-        [nuevaTiradaMax, partidaId],
+        [nuevaTiradaMax, partida.id],
       )
     } else {
       rondaTerminada = await terminarRonda(conexion, partida)
     }
 
-    return { partida: estadoPartida(await leerPartida(conexion, partidaId)), rondaTerminada }
+    return { partida: estadoPartida(await leerPartida(conexion, idPublico)), rondaTerminada }
   })
 }
 

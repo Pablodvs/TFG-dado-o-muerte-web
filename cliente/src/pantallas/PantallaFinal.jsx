@@ -17,7 +17,9 @@ import { crearPartida, salirDePartida, selectPartida } from '../slices/partida';
 // (ni al cambiar de idioma: todos tienen la misma lista, en el mismo orden)
 function castigoPara(t, partidaId) {
     const castigos = t('final.castigos', { returnObjects: true });
-    return castigos[Math.abs(Number(partidaId) || 0) % castigos.length];
+    let hash = 0;
+    for (const letra of String(partidaId)) hash = (hash * 31 + letra.charCodeAt(0)) >>> 0;
+    return castigos[hash % castigos.length];
 }
 
 export default function PantallaFinal() {

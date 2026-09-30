@@ -23,13 +23,16 @@ function escribir(clave, valor) {
     }
 }
 
+// El id público que genera el servidor: 22 caracteres base64url
+const FORMATO_ID = /^[A-Za-z0-9_-]{22}$/;
+
 export function leerPartidaId() {
-    const id = Number(leer(CLAVE_PARTIDA));
-    return Number.isInteger(id) && id > 0 ? id : null;
+    const id = leer(CLAVE_PARTIDA);
+    return id !== null && FORMATO_ID.test(id) ? id : null;
 }
 
 export function guardarPartidaId(id) {
-    escribir(CLAVE_PARTIDA, String(id));
+    escribir(CLAVE_PARTIDA, id);
     borrarTurno();
 }
 

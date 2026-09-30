@@ -193,6 +193,7 @@
     "noEsSuTurno": "No es el turno de este jugador.",
     "demasiadasTiradas": "Has tirado más veces de las que se pueden en esta ronda.",
     "sinBaseDeDatos": "No hay conexión con la base de datos.",
+    "demasiadasPartidas": "Se han creado demasiadas partidas desde esta conexión. Espera unos minutos e inténtalo de nuevo.",
     "rutaNoEncontrada": "Ruta no encontrada.",
     "jsonNoValido": "El cuerpo de la petición no es un JSON válido.",
     "peticionNoValida": "Petición no válida.",

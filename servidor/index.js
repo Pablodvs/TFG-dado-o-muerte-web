@@ -1,7 +1,9 @@
 const os = require('os')
 const config = require('./config')
-const app = require('./app')
+const { crearApp } = require('./app')
 const { pool } = require('./db')
+
+const app = crearApp()
 
 function ipsLocales() {
   return Object.values(os.networkInterfaces())
