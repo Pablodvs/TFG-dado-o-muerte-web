@@ -1,0 +1,814 @@
+/* Pantalla de juego: cabecera, tirada a superar, turno, pasar el móvil, resumen y marcador */
+
+.partida {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-3);
+  width: min(100% - 2 * var(--gutter), var(--ancho-columna));
+  margin-inline: auto;
+  padding-bottom: calc(var(--e-6) + var(--seguro-abajo));
+}
+
+.partida--turno,
+.partida--resumen {
+  padding-bottom: calc(var(--barra-alto) + var(--e-5) + var(--seguro-abajo));
+}
+
+.partida__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.partida__ronda {
+  color: var(--c-acento);
+  font-family: var(--f-texto);
+  font-size: var(--t-s);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.partida__detalle {
+  color: var(--c-texto-tenue);
+  font-size: var(--t-s);
+  font-variant-numeric: tabular-nums;
+}
+
+.partida__info {
+  display: grid;
+  gap: var(--e-4);
+  margin-top: var(--e-4);
+}
+
+@media (min-width: 900px) {
+  .partida {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "cabecera info"
+      "objetivo info"
+      "zona info";
+    column-gap: var(--e-6);
+    align-items: start;
+    width: min(100% - 2 * var(--gutter), var(--ancho-amplio));
+  }
+
+  .partida--turno,
+  .partida--resumen {
+    padding-bottom: calc(var(--e-7) + var(--seguro-abajo));
+  }
+
+  .partida__cabecera { grid-area: cabecera; }
+  .partida__objetivo { grid-area: objetivo; }
+  .partida__zona { grid-area: zona; }
+
+  .partida__info {
+    position: sticky;
+    top: var(--e-4);
+    grid-area: info;
+    margin-top: 0;
+  }
+
+  /* El resumen ocupa el sitio de la tirada a superar */
+  .partida--resumen .partida__zona {
+    grid-row: objetivo / zona;
+  }
+}
+
+/* Tirada a superar */
+
+.peor-tirada {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "icono cuerpo"
+    "icono dados";
+  align-items: center;
+  gap: var(--e-2) var(--e-3);
+  padding: var(--e-3) var(--e-4);
+  border: 1px solid rgb(255 138 128 / 0.45);
+  border-radius: var(--r-l);
+  background: radial-gradient(90% 140% at 0% 50%, rgb(239 70 82 / 0.16), transparent 60%), var(--c-peligro-fondo);
+  box-shadow: var(--sombra-tarjeta), inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.peor-tirada__icono {
+  grid-area: icono;
+  align-self: start;
+  width: 30px;
+  height: 30px;
+  color: var(--c-peligro);
+}
+
+.peor-tirada__cuerpo {
+  grid-area: cuerpo;
+  min-width: 0;
+}
+
+.peor-tirada__dados {
+  grid-area: dados;
+}
+
+.peor-tirada__titulo {
+  color: var(--c-peligro);
+  font-family: var(--f-texto);
+  font-size: var(--t-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Con un nombre largo se recorta el nombre, nunca la jugada */
+.peor-tirada__detalle {
+  display: flex;
+  align-items: baseline;
+  font-size: var(--t-m);
+  white-space: nowrap;
+}
+
+.peor-tirada__nombre {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--c-texto-suave);
+  text-overflow: ellipsis;
+}
+
+.peor-tirada__jugada {
+  flex-shrink: 0;
+  margin-left: 0.3em;
+  font-size: var(--t-l);
+  font-weight: 800;
+}
+
+.peor-tirada__nota,
+.peor-tirada__vacia {
+  color: var(--c-texto-tenue);
+  font-size: var(--t-s);
+}
+
+.peor-tirada--vacia {
+  grid-template-areas: "icono cuerpo";
+  border-color: var(--c-borde);
+  background: var(--c-superficie);
+}
+
+.peor-tirada--vacia .peor-tirada__icono,
+.peor-tirada--vacia .peor-tirada__titulo {
+  color: var(--c-texto-tenue);
+}
+
+@media (min-width: 400px) {
+  .peor-tirada {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "icono cuerpo dados";
+  }
+
+  .peor-tirada__icono {
+    align-self: center;
+  }
+}
+
+/* Turno */
+
+.turno {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-3);
+  margin-top: var(--e-2);
+}
+
+.turno__cabecera {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.turno__quien {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.turno__jugador {
+  display: grid;
+  min-width: 0;
+}
+
+.turno__prefijo {
+  color: var(--c-texto-tenue);
+  font-family: var(--f-texto);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.turno__nombre {
+  overflow: hidden;
+  font-size: var(--t-xl);
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turno__quien .vidas {
+  font-size: 15px;
+}
+
+.turno__contador {
+  display: grid;
+  flex-shrink: 0;
+  justify-items: end;
+  gap: 6px;
+}
+
+.turno__tiradas {
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.turno__tirada {
+  color: var(--c-texto);
+  font-family: var(--f-titulo);
+  font-size: var(--t-xl);
+  font-weight: 850;
+}
+
+.turno__marcas {
+  display: flex;
+  gap: 5px;
+}
+
+.turno__marca {
+  width: 20px;
+  height: 6px;
+  border-radius: var(--r-total);
+  background: var(--c-borde-fuerte);
+  transition: background 0.2s;
+}
+
+.turno__marca--usada {
+  background: var(--c-acento);
+  box-shadow: 0 0 8px rgb(245 184 61 / 0.6);
+}
+
+/* La bandeja de dados: un hueco hundido en el tapete */
+.turno__dados {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  justify-items: center;
+  gap: clamp(6px, 2.4vw, 16px);
+  margin: 0;
+  padding: 22px clamp(8px, 3vw, 20px) 22px;
+  border-radius: var(--r-l);
+  background:
+    radial-gradient(100% 120% at 50% 0%, rgb(255 255 255 / 0.05), transparent 70%),
+    rgb(0 0 0 / 0.24);
+  box-shadow: inset 0 3px 12px rgb(0 0 0 / 0.45), 0 1px 0 rgb(255 255 255 / 0.06);
+  list-style: none;
+}
+
+.turno__dado {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.turno__ayuda {
+  min-height: 2.9em;
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.turno__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--e-2);
+  padding: var(--e-3);
+  border: 1px solid rgb(255 138 128 / 0.4);
+  border-radius: var(--r-m);
+  background: var(--c-peligro-tinte);
+  color: var(--c-peligro);
+  font-size: var(--t-s);
+  font-weight: 600;
+}
+
+.turno__error .icono {
+  width: 1.3em;
+  height: 1.3em;
+}
+
+.turno__acciones {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-auto-flow: row;
+}
+
+@media (min-width: 900px) {
+  .turno__acciones {
+    position: static;
+    margin-top: var(--e-2);
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Jugada que llevas */
+
+.turno__jugada {
+  display: grid;
+}
+
+.jugada-actual {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  align-content: center;
+  justify-content: center;
+  gap: 2px var(--e-2);
+  min-height: 76px;
+  padding: var(--e-3) var(--e-4);
+  border: 1px solid var(--c-borde);
+  border-radius: var(--r-l);
+  background: var(--c-superficie);
+  text-align: center;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.jugada-actual__etiqueta {
+  color: var(--c-texto-tenue);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.jugada-actual__nombre {
+  font-family: var(--f-titulo);
+  font-size: var(--t-xl);
+  font-weight: 850;
+  line-height: 1.1;
+}
+
+.jugada-actual__comparacion {
+  display: inline-flex;
+  flex-basis: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--t-s);
+  font-weight: 700;
+}
+
+.jugada-actual__comparacion::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.jugada-actual--a-salvo {
+  border-color: rgb(116 229 173 / 0.45);
+  background: linear-gradient(var(--c-exito-tinte), var(--c-exito-tinte)), var(--c-superficie);
+}
+
+.jugada-actual--a-salvo .jugada-actual__comparacion {
+  color: var(--c-exito);
+}
+
+.jugada-actual--peligro {
+  border-color: rgb(255 138 128 / 0.55);
+  background: radial-gradient(80% 120% at 50% 100%, rgb(239 70 82 / 0.16), transparent 70%), var(--c-peligro-fondo);
+}
+
+.jugada-actual--peligro .jugada-actual__comparacion {
+  color: var(--c-peligro);
+}
+
+.jugada-actual--vacia {
+  align-items: center;
+  border-style: dashed;
+  border-color: var(--c-borde-fuerte);
+  background: none;
+  color: var(--c-texto-tenue);
+  font-size: var(--t-s);
+}
+
+/* Pasar el móvil: cortina a pantalla completa */
+
+.pasar-movil {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: flex;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(70% 55% at 50% 42%, rgb(49 150 104 / 0.55), transparent 70%),
+    radial-gradient(130% 100% at 50% 50%, var(--c-fondo) 40%, var(--c-fondo-sombra) 100%);
+  animation: cortina 0.35s ease-out;
+}
+
+.pasar-movil__boton {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e-3);
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: calc(var(--seguro-arriba) + var(--e-6)) var(--gutter) calc(var(--seguro-abajo) + var(--e-6));
+  border: 0;
+  background: none;
+  color: var(--c-texto);
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pasar-movil__boton:focus-visible {
+  outline-color: rgb(255 255 255 / 0.28);
+  outline-offset: -14px;
+  border-radius: 28px;
+}
+
+.pasar-movil__boton:active .pasar-movil__accion {
+  transform: scale(0.96);
+}
+
+/* Recién aparecida no responde (un doble toque no se la salta): se ve apagada */
+.pasar-movil__boton--esperando {
+  cursor: default;
+}
+
+.pasar-movil__boton--esperando .pasar-movil__accion {
+  opacity: 0.35;
+  filter: saturate(0.3);
+}
+
+.pasar-movil__boton--esperando:active .pasar-movil__accion {
+  transform: none;
+}
+
+.pasar-movil__ronda {
+  padding: 4px 12px;
+  border: 1px solid rgb(245 184 61 / 0.5);
+  border-radius: var(--r-total);
+  color: var(--c-acento);
+  font-size: var(--t-xs);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pasar-movil__aviso {
+  margin-top: var(--e-4);
+  color: var(--c-texto-suave);
+  font-size: var(--t-l);
+  font-weight: 600;
+}
+
+.pasar-movil__nombre {
+  max-width: 100%;
+  font-family: var(--f-titulo);
+  font-size: var(--t-3xl);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  text-shadow: 0 5px 0 rgb(0 0 0 / 0.3), 0 0 40px rgb(245 184 61 / 0.25);
+  animation: nombre-entrada 0.5s var(--rebote);
+}
+
+.pasar-movil .vidas {
+  font-size: 30px;
+}
+
+.pasar-movil__detalle {
+  max-width: 22em;
+  margin-top: var(--e-2);
+  color: var(--c-texto-suave);
+  font-size: var(--t-m);
+}
+
+.pasar-movil__superar {
+  padding: 6px 14px;
+  border: 1px solid rgb(255 138 128 / 0.35);
+  border-radius: var(--r-total);
+  background: var(--c-peligro-fondo);
+  color: var(--c-peligro);
+  font-size: var(--t-s);
+}
+
+.pasar-movil__superar strong {
+  color: var(--c-texto);
+}
+
+.pasar-movil__accion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  margin-top: var(--e-6);
+  padding: 16px 28px;
+  border-radius: var(--r-total);
+  background: linear-gradient(180deg, var(--c-acento-claro), var(--c-acento) 70%);
+  box-shadow: 0 5px 0 var(--c-acento-oscuro), 0 14px 30px rgb(0 0 0 / 0.4);
+  color: var(--c-sobre-acento);
+  font-size: var(--t-l);
+  font-weight: 800;
+  transition: transform 0.1s, opacity 0.2s, filter 0.2s;
+}
+
+.pasar-movil__accion .icono {
+  width: 1.4em;
+  height: 1.4em;
+}
+
+.pasar-movil__nota {
+  color: var(--c-texto-tenue);
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pasar-movil__accion {
+    animation: latido 1.6s ease-in-out 0.6s infinite;
+  }
+
+  .pasar-movil__accion .icono {
+    animation: toque 1.6s ease-in-out 0.6s infinite;
+  }
+}
+
+@keyframes cortina {
+  from { opacity: 0; }
+}
+
+@keyframes nombre-entrada {
+  from { opacity: 0; transform: scale(0.85) translateY(10px); }
+}
+
+@keyframes latido {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.05; }
+}
+
+@keyframes toque {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-3px) rotate(-6deg); }
+  55% { transform: translateY(2px); }
+}
+
+/* Resumen de la ronda: el momento dramático */
+
+.resumen-ronda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e-3);
+  margin-top: var(--e-2);
+  padding: var(--e-6) var(--e-4) var(--e-5);
+  border: 1px solid rgb(255 138 128 / 0.35);
+  border-radius: var(--r-l);
+  background:
+    radial-gradient(90% 70% at 50% 0%, rgb(239 70 82 / 0.32), transparent 70%),
+    var(--c-superficie);
+  box-shadow: var(--sombra-flotante);
+  text-align: center;
+  animation: resumen-entrada 0.45s var(--rebote);
+}
+
+.resumen-ronda__titulo {
+  color: var(--c-texto-suave);
+  font-family: var(--f-texto);
+  font-size: var(--t-xs);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.resumen-ronda__calavera {
+  width: 76px;
+  height: 76px;
+  color: var(--c-texto);
+  filter: drop-shadow(0 6px 0 rgb(0 0 0 / 0.3)) drop-shadow(0 0 24px rgb(239 70 82 / 0.5));
+  animation: calavera-cae 0.7s var(--rebote) 0.1s both;
+}
+
+.resumen-ronda__perdedor {
+  display: grid;
+  gap: var(--e-1);
+  font-family: var(--f-titulo);
+  font-size: var(--t-xl);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.resumen-ronda__nombre {
+  max-width: 100%;
+  color: var(--c-peligro);
+  font-size: var(--t-3xl);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+  text-shadow: 0 4px 0 rgb(0 0 0 / 0.3);
+}
+
+.resumen-ronda__quedan {
+  color: var(--c-texto-suave);
+  font-family: var(--f-texto);
+  font-size: var(--t-m);
+  font-weight: 600;
+}
+
+.resumen-ronda .vidas {
+  font-size: 34px;
+}
+
+.resumen-ronda__jugada {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-3);
+  width: 100%;
+  margin-top: var(--e-2);
+  padding: var(--e-4) var(--e-3);
+  border-radius: var(--r-m);
+  background: var(--c-hundido);
+}
+
+.resumen-ronda__etiqueta {
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+}
+
+.resumen-ronda__etiqueta strong {
+  color: var(--c-texto);
+  font-size: var(--t-l);
+}
+
+.resumen-ronda__siguiente {
+  color: var(--c-texto-tenue);
+  font-size: var(--t-s);
+}
+
+.resumen-ronda--fin {
+  border-color: rgb(255 138 128 / 0.6);
+  background:
+    radial-gradient(100% 80% at 50% 0%, rgb(239 70 82 / 0.5), transparent 75%),
+    var(--c-superficie);
+}
+
+@media (min-width: 900px) {
+  .resumen-ronda__acciones {
+    position: static;
+    width: 100%;
+    max-width: 22rem;
+    margin-top: var(--e-3);
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@keyframes resumen-entrada {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+}
+
+@keyframes calavera-cae {
+  0% { opacity: 0; transform: translateY(-40px) rotate(-20deg) scale(0.6); }
+  60% { opacity: 1; transform: translateY(4px) rotate(6deg) scale(1.08); }
+  100% { transform: none; }
+}
+
+/* Marcador */
+
+.marcador {
+  padding: var(--e-4);
+}
+
+.marcador__titulo,
+.final__subtitulo {
+  margin-bottom: var(--e-3);
+  color: var(--c-texto-suave);
+  font-family: var(--f-texto);
+  font-size: var(--t-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.marcador__lista {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: orden;
+}
+
+.marcador__jugador {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "num nombre vidas"
+    "num estado vidas";
+  align-items: center;
+  column-gap: var(--e-3);
+  min-height: 52px;
+  padding: 6px 10px;
+  border-radius: var(--r-m);
+  counter-increment: orden;
+}
+
+.marcador__jugador::before {
+  content: counter(orden);
+  display: grid;
+  grid-area: num;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.08);
+  color: var(--c-texto-suave);
+  font-size: var(--t-xs);
+  font-weight: 800;
+}
+
+.marcador__nombre {
+  grid-area: nombre;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.marcador__jugador .vidas {
+  grid-area: vidas;
+  font-size: 14px;
+}
+
+.marcador__estado {
+  display: flex;
+  grid-area: estado;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: var(--c-texto-tenue);
+  font-size: var(--t-s);
+}
+
+.marcador__calavera {
+  width: 15px;
+  height: 15px;
+}
+
+.marcador__jugador--ha-jugado .marcador__estado {
+  color: var(--c-texto-suave);
+}
+
+.marcador__jugador--actual {
+  background: rgb(245 184 61 / 0.12);
+  box-shadow: inset 3px 0 0 var(--c-acento);
+}
+
+.marcador__jugador--actual::before {
+  background: var(--c-acento);
+  color: var(--c-sobre-acento);
+}
+
+.marcador__jugador--actual .marcador__estado {
+  color: var(--c-acento);
+  font-weight: 700;
+}
+
+.marcador__jugador--peor {
+  background: var(--c-peligro-fondo);
+  box-shadow: inset 0 0 0 1px rgb(255 138 128 / 0.3);
+}
+
+.marcador__jugador--peor .marcador__estado {
+  color: var(--c-peligro);
+  font-weight: 700;
+}
+
+.marcador__jugador--sin-vidas .marcador__nombre {
+  color: var(--c-texto-tenue);
+  text-decoration: line-through;
+}

@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import jugadorReducer from "./slices/JugadorSlice"
-import partidaReducer from './slices/PartidaSlice'
+import partidaReducer from './slices/partida';
 
-const store = configureStore({
-    reducer: {
-        jugador: jugadorReducer,
-        partida: partidaReducer,
-    }
-})
+export function crearStore(preloadedState) {
+    return configureStore({
+        reducer: { partida: partidaReducer },
+        preloadedState,
+    });
+}
 
-export default store
+const store = crearStore();
 
+export default store;

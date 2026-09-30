@@ -1,0 +1,517 @@
+/* Cabecera, pantalla de inicio y reglas */
+
+.cabecera {
+  width: min(100% - 2 * var(--gutter), var(--ancho-columna));
+  margin-inline: auto;
+  padding: calc(var(--seguro-arriba) + var(--e-3)) 0 var(--e-2);
+}
+
+.cabecera__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: 44px;
+  color: var(--c-texto);
+  font-family: var(--f-titulo);
+  font-size: var(--t-l);
+  font-weight: 850;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.cabecera__logo {
+  width: 34px;
+  height: 34px;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.35));
+}
+
+.cabecera__o {
+  color: var(--c-acento);
+  font-style: italic;
+}
+
+/* Portada: el gran rótulo */
+
+.cabecera--portada {
+  padding-top: calc(var(--seguro-arriba) + var(--e-6));
+  padding-bottom: var(--e-5);
+  text-align: center;
+}
+
+.cabecera--portada .cabecera__marca {
+  flex-direction: column;
+  gap: var(--e-3);
+  font-size: var(--t-3xl);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-shadow: 0 4px 0 rgb(0 0 0 / 0.3);
+}
+
+.cabecera--portada .cabecera__logo {
+  width: clamp(88px, 26vw, 128px);
+  height: auto;
+  filter: drop-shadow(0 14px 18px rgb(0 0 0 / 0.45));
+}
+
+.cabecera--portada .cabecera__o {
+  font-size: 0.6em;
+  vertical-align: 0.12em;
+}
+
+.cabecera__lema {
+  margin-top: var(--e-2);
+  color: var(--c-texto-suave);
+  font-size: var(--t-m);
+}
+
+@media (min-width: 900px) {
+  .cabecera {
+    width: min(100% - 2 * var(--gutter), var(--ancho-amplio));
+  }
+
+  .cabecera--portada {
+    padding-top: calc(var(--seguro-arriba) + var(--e-6));
+  }
+
+  .cabecera--portada .cabecera__marca {
+    font-size: 3.75rem;
+  }
+
+  .cabecera--portada .cabecera__logo {
+    width: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cabecera--portada .cabecera__logo {
+    animation: logo-flotar 4s ease-in-out infinite;
+  }
+}
+
+@keyframes logo-flotar {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
+}
+
+/* Inicio */
+
+.inicio {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--e-4);
+  width: min(100% - 2 * var(--gutter), var(--ancho-columna));
+  margin-inline: auto;
+  padding-bottom: calc(var(--e-6) + var(--seguro-abajo));
+}
+
+.inicio__titulo {
+  font-size: var(--t-2xl);
+  font-weight: 850;
+}
+
+.inicio__jugadores {
+  display: grid;
+  gap: var(--e-3);
+  margin-top: var(--e-4);
+}
+
+.inicio__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.inicio__subtitulo {
+  font-family: var(--f-texto);
+  font-size: var(--t-s);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-texto-suave);
+}
+
+.inicio__cupo {
+  padding: 2px 10px;
+  border-radius: var(--r-total);
+  background: var(--c-hundido);
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.inicio__recuento {
+  color: var(--c-texto-tenue);
+  font-size: var(--t-s);
+}
+
+.inicio__acciones {
+  position: sticky;
+  z-index: 2;
+  bottom: 0;
+  display: grid;
+  gap: var(--e-2);
+  /* De borde a borde de la tarjeta, para que el degradado no deje una franja */
+  margin: var(--e-4) calc(-1 * var(--tarjeta-relleno)) 0;
+  padding: var(--e-3) var(--tarjeta-relleno) calc(var(--e-3) + var(--seguro-abajo));
+  background: linear-gradient(to top, var(--c-superficie) 70%, rgb(16 55 39 / 0));
+}
+
+.inicio__empezar {
+  width: 100%;
+}
+
+/* Confirmación antes de abandonar la partida guardada */
+.inicio__confirmar {
+  display: grid;
+  gap: var(--e-2);
+  padding: var(--e-4);
+  border: 1px solid rgb(255 138 128 / 0.5);
+  border-radius: var(--r-l);
+  /* Opaco: va en la barra fija y el formulario pasa por debajo */
+  background: linear-gradient(var(--c-peligro-fondo), var(--c-peligro-fondo)), var(--c-superficie);
+  box-shadow: var(--sombra-flotante);
+  container-type: inline-size;
+  animation: aparecer-abajo 0.2s ease-out;
+}
+
+.inicio__confirmar-pregunta {
+  font-family: var(--f-titulo);
+  font-size: var(--t-l);
+  font-weight: 800;
+}
+
+.inicio__confirmar-pregunta:focus {
+  outline: none;
+}
+
+.inicio__confirmar-detalle {
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+}
+
+/* Uno encima de otro si no caben en una línea */
+.inicio__confirmar-botones {
+  display: grid;
+  gap: var(--e-3);
+  margin-top: var(--e-2);
+}
+
+.inicio__confirmar-botones .boton {
+  padding-inline: 0.75rem;
+}
+
+@container (min-width: 380px) {
+  .inicio__confirmar-botones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@keyframes aparecer-abajo {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+.inicio__error,
+.form-jugador__error,
+.final__error {
+  color: var(--c-peligro);
+  font-size: var(--t-s);
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .inicio {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--e-5);
+    width: min(100% - 2 * var(--gutter), var(--ancho-amplio));
+  }
+
+  .partida-en-curso {
+    grid-column: 1 / -1;
+  }
+
+  .inicio .reglas {
+    position: sticky;
+    top: var(--e-4);
+  }
+}
+
+/* Formulario para apuntar jugadores */
+
+.form-jugador {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.form-jugador__etiqueta {
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+  font-weight: 600;
+}
+
+.form-jugador__fila {
+  display: flex;
+  gap: var(--e-2);
+}
+
+.form-jugador__entrada {
+  flex: 1;
+}
+
+.form-jugador__anadir {
+  min-height: 52px;
+  padding-inline: 1rem;
+}
+
+/* Lista de jugadores apuntados: fichas de colores con la inicial */
+
+.lista-jugadores {
+  display: grid;
+  gap: var(--e-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-jugadores__jugador {
+  --ficha: var(--c-acento);
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  min-height: 52px;
+  padding: 4px 4px 4px 8px;
+  border-radius: var(--r-m);
+  background: var(--c-hundido);
+  animation: aparecer-lado 0.25s ease-out;
+}
+
+.lista-jugadores__jugador::before {
+  content: attr(data-inicial);
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ficha);
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), 0 2px 0 rgb(0 0 0 / 0.3);
+  color: #1b1405;
+  font-family: var(--f-titulo);
+  font-weight: 850;
+}
+
+.lista-jugadores__jugador:nth-child(8n + 2) { --ficha: #ff8a80; }
+.lista-jugadores__jugador:nth-child(8n + 3) { --ficha: #7cc7ff; }
+.lista-jugadores__jugador:nth-child(8n + 4) { --ficha: #c8a6ff; }
+.lista-jugadores__jugador:nth-child(8n + 5) { --ficha: #74e5ad; }
+.lista-jugadores__jugador:nth-child(8n + 6) { --ficha: #ff9ecf; }
+.lista-jugadores__jugador:nth-child(8n + 7) { --ficha: #d4e76a; }
+.lista-jugadores__jugador:nth-child(8n + 8) { --ficha: #ffb071; }
+
+.lista-jugadores__nombre {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lista-jugadores__quitar {
+  width: 44px;
+  font-size: 1.1rem;
+  border-radius: var(--r-s);
+}
+
+@media (hover: hover) {
+  .lista-jugadores__quitar:hover {
+    background: var(--c-peligro-tinte);
+    color: var(--c-peligro);
+  }
+}
+
+@keyframes aparecer-lado {
+  from { opacity: 0; transform: translateX(-8px); }
+}
+
+/* Partida a medias */
+
+.partida-en-curso {
+  display: grid;
+  gap: var(--e-4);
+  padding: var(--e-4);
+  border-color: rgb(245 184 61 / 0.45);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgb(245 184 61 / 0.16), transparent 55%),
+    var(--c-superficie);
+}
+
+.partida-en-curso__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: var(--t-l);
+  font-weight: 800;
+}
+
+.partida-en-curso__titulo::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-acento);
+  box-shadow: 0 0 0 4px rgb(245 184 61 / 0.25);
+}
+
+.partida-en-curso__detalle {
+  margin-top: var(--e-1);
+  overflow: hidden;
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.partida-en-curso__continuar {
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  .partida-en-curso {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: var(--e-4) var(--e-5);
+  }
+
+  .partida-en-curso__continuar {
+    width: auto;
+  }
+}
+
+/* Reglas */
+
+.reglas {
+  overflow: hidden;
+}
+
+.reglas__titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+  min-height: 56px;
+  padding: var(--e-2) var(--e-4);
+  font-family: var(--f-titulo);
+  font-size: var(--t-l);
+  font-weight: 800;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.reglas__titulo::-webkit-details-marker {
+  display: none;
+}
+
+.reglas__titulo:focus-visible {
+  outline-offset: -4px;
+  border-radius: var(--r-l);
+}
+
+.reglas__flecha {
+  color: var(--c-acento);
+  transition: transform 0.2s;
+}
+
+.reglas[open] .reglas__flecha {
+  transform: rotate(90deg);
+}
+
+.reglas__contenido {
+  display: grid;
+  gap: var(--e-3);
+  padding: 0 var(--e-4) var(--e-4);
+  color: var(--c-texto-suave);
+  font-size: var(--t-s);
+}
+
+.reglas__contenido strong {
+  color: var(--c-texto);
+}
+
+.reglas__lista {
+  display: grid;
+  gap: var(--e-2);
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.reglas__lista li::marker {
+  color: var(--c-acento);
+}
+
+.reglas__subtitulo {
+  margin-top: var(--e-2);
+  color: var(--c-texto);
+  font-family: var(--f-texto);
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reglas__jugadas {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: jugada;
+}
+
+.reglas__jugada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--e-3);
+  padding: 6px 10px;
+  border-radius: var(--r-s);
+  background: var(--c-hundido);
+  counter-increment: jugada;
+}
+
+.reglas__jugada > span {
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+}
+
+.reglas__jugada > span::before {
+  content: counter(jugada) ".";
+  display: inline-block;
+  width: 1.5em;
+  text-indent: 0;
+  color: var(--c-acento);
+  font-weight: 800;
+}
+
+.reglas .dado--pequeno {
+  --dado-tam: 20px;
+  border-radius: 5px;
+}
+
+.reglas .mano {
+  gap: 3px;
+}
+
+.reglas__ejemplo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2);
+  margin-top: var(--e-2);
+  color: var(--c-texto);
+  font-weight: 700;
+}

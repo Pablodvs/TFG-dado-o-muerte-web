@@ -1,0 +1,73 @@
+// Persistencia en localStorage: la partida en curso y el turno a medias, para
+// que recargar la página (algo habitual en el móvil) no pierda nada.
+import { NUM_DADOS, TIRADAS_MAXIMAS } from './reglas';
+
+const CLAVE_PARTIDA = 'dadoOMuerte:partidaId';
+const CLAVE_TURNO = 'dadoOMuerte:turno';
+
+function leer(clave) {
+    try {
+        return window.localStorage.getItem(clave);
+    } catch {
+        return null;
+    }
+}
+
+function escribir(clave, valor) {
+    try {
+        if (valor === null) window.localStorage.removeItem(clave);
+        else window.localStorage.setItem(clave, valor);
+    } catch {
+        // Sin almacenamiento (modo privado...): la partida sigue, pero no sobrevive a una recarga
+    }
+}
+
+export function leerPartidaId() {
+    const id = Number(leer(CLAVE_PARTIDA));
+    return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+export function guardarPartidaId(id) {
+    escribir(CLAVE_PARTIDA, String(id));
+    borrarTurno();
+}
+
+export function borrarPartidaId() {
+    escribir(CLAVE_PARTIDA, null);
+    borrarTurno();
+}
+
+// Identifica un turno concreto: cada jugador juega una sola vez por ronda
+export function claveTurno(partidaId, ronda, jugadorId) {
+    return `${partidaId}:${ronda}:${jugadorId}`;
+}
+
+function esDadoValido(dado) {
+    return Boolean(dado)
+        && typeof dado.guardado === 'boolean'
+        && Number.isInteger(dado.valor) && dado.valor >= 1 && dado.valor <= 6;
+}
+
+// Solo se guarda un turno a la vez; si la clave no coincide se ignora
+export function leerTurno(clave) {
+    try {
+        const guardado = JSON.parse(leer(CLAVE_TURNO));
+        if (!guardado || guardado.clave !== clave) return null;
+        const { dados, tirada } = guardado;
+        const valido = Array.isArray(dados)
+            && dados.length === NUM_DADOS
+            && dados.every(esDadoValido)
+            && Number.isInteger(tirada) && tirada >= 1 && tirada <= TIRADAS_MAXIMAS;
+        return valido ? { dados, tirada } : null;
+    } catch {
+        return null;
+    }
+}
+
+export function guardarTurno(clave, { dados, tirada }) {
+    escribir(CLAVE_TURNO, JSON.stringify({ clave, dados, tirada }));
+}
+
+export function borrarTurno() {
+    escribir(CLAVE_TURNO, null);
+}

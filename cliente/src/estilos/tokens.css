@@ -1,0 +1,85 @@
+/*
+ * Tokens de diseño: "tapete de medianoche".
+ * Verde de mesa de juego, latón para lo que se toca y marfil para dados y texto.
+ * Un único tema oscuro: es un juego de mesa, y así el móvil no deslumbra al pasarlo.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Color */
+  --c-fondo: #0a2419;
+  --c-fondo-luz: #17573e;
+  --c-fondo-sombra: #04120c;
+  --c-superficie: #103727;
+  --c-superficie-alta: #174a35;
+  --c-hundido: rgb(0 0 0 / 0.22);
+  --c-borde: rgb(255 255 255 / 0.09);
+  --c-borde-fuerte: rgb(255 255 255 / 0.2);
+
+  --c-texto: #f6f1e4;
+  --c-texto-suave: #bdd0c3;
+  --c-texto-tenue: #93ae9f;
+
+  --c-acento: #f5b83d;
+  --c-acento-claro: #ffd477;
+  --c-acento-oscuro: #a86f0c;
+  --c-sobre-acento: #2b1a00;
+
+  --c-peligro: #ff8a80;
+  --c-peligro-intenso: #ef4652;
+  --c-peligro-tinte: rgb(239 70 82 / 0.14);
+  --c-peligro-fondo: rgb(24 4 8 / 0.42);
+  --c-exito: #74e5ad;
+  --c-exito-tinte: rgb(116 229 173 / 0.12);
+  --c-corazon: #f0485a;
+  --c-corazon-perdido: rgb(255 255 255 / 0.16);
+  --c-foco: #ffffff;
+
+  --c-dado: #fdf8ec;
+  --c-dado-sombra: #e6dcc4;
+  --c-dado-canto: #b7a782;
+  --c-dado-punto: #1d2130;
+  --c-dado-uno: #d7263d;
+  --c-dado-guardado: #fff1cc;
+  --c-dado-guardado-sombra: #f4d58c;
+
+  /* Tipografía: fuentes del sistema (se juega sin conexión a internet) */
+  --f-texto: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans",
+    "Liberation Sans", Arial, system-ui, sans-serif;
+  --f-titulo: ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", var(--f-texto);
+
+  --t-xs: 0.75rem;
+  --t-s: 0.875rem;
+  --t-m: 1rem;
+  --t-l: clamp(1.125rem, 1.05rem + 0.4vw, 1.3rem);
+  --t-xl: clamp(1.375rem, 1.15rem + 1.1vw, 1.85rem);
+  --t-2xl: clamp(1.75rem, 1.3rem + 2.2vw, 2.6rem);
+  --t-3xl: clamp(2.4rem, 1.5rem + 5.5vw, 4.5rem);
+
+  /* Espaciado */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+
+  /* Formas y sombras */
+  --r-s: 8px;
+  --r-m: 14px;
+  --r-l: 22px;
+  --r-total: 999px;
+  --sombra-tarjeta: 0 12px 32px rgb(0 0 0 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --sombra-flotante: 0 18px 40px rgb(0 0 0 / 0.45);
+
+  /* Maquetación */
+  --gutter: max(clamp(16px, 4vw, 32px), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --ancho-columna: 34rem;
+  --ancho-amplio: 64rem;
+  --seguro-arriba: env(safe-area-inset-top, 0px);
+  --seguro-abajo: env(safe-area-inset-bottom, 0px);
+  --barra-alto: 80px;
+
+  --rebote: cubic-bezier(0.3, 1.6, 0.5, 1);
+}

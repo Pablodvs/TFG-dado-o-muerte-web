@@ -1,0 +1,260 @@
+/* Dados, manos de solo lectura, vidas y logo */
+
+.dado {
+  --dado-tam: 44px;
+  --dado-relieve: 0 3px 0 var(--c-dado-canto), 0 6px 12px rgb(0 0 0 / 0.32);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--dado-tam);
+  aspect-ratio: 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 22%;
+  background: linear-gradient(150deg, var(--c-dado) 0%, var(--c-dado) 42%, var(--c-dado-sombra) 100%);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.9), inset 0 -3px 0 rgb(0 0 0 / 0.07), var(--dado-relieve);
+  color: var(--c-dado-punto);
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.dado__cara {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.dado__punto {
+  fill: var(--c-dado-punto);
+}
+
+.dado__punto--uno {
+  fill: var(--c-dado-uno);
+}
+
+.dado__incognita {
+  fill: var(--c-dado-canto);
+  font-family: var(--f-titulo);
+  font-size: 58px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.dado--pequeno {
+  --dado-tam: 24px;
+  --dado-relieve: 0 2px 0 var(--c-dado-canto), 0 3px 6px rgb(0 0 0 / 0.3);
+  border-radius: 6px;
+  box-shadow: var(--dado-relieve);
+}
+
+.dado--mediano {
+  --dado-tam: 44px;
+}
+
+.dado--grande {
+  --dado-relieve: 0 5px 0 var(--c-dado-canto), 0 12px 20px rgb(0 0 0 / 0.42);
+  width: 100%;
+  max-width: 84px;
+  box-shadow: inset 0 3px 0 rgb(255 255 255 / 0.9), inset 0 -5px 0 rgb(0 0 0 / 0.07), var(--dado-relieve);
+}
+
+/* Aún sin tirar: el dado está en la mesa, boca abajo */
+.dado--sin-tirar {
+  background: linear-gradient(150deg, #efe7d3, #d9ceb4);
+}
+
+/* Interactivo */
+
+.dado--interactivo {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: translate 0.2s var(--rebote), box-shadow 0.2s, background 0.2s;
+}
+
+.dado--interactivo:disabled {
+  cursor: default;
+}
+
+.dado--interactivo:active:not(:disabled) {
+  scale: 0.93;
+}
+
+.dado--interactivo:focus-visible {
+  outline-offset: 5px;
+}
+
+/* Guardado: se levanta, anillo de latón y candado colgando (no solo color) */
+.dado--guardado {
+  translate: 0 -10px;
+  background: linear-gradient(150deg, var(--c-dado-guardado) 0%, var(--c-dado-guardado) 40%, var(--c-dado-guardado-sombra) 100%);
+  box-shadow:
+    inset 0 3px 0 rgb(255 255 255 / 0.8),
+    0 0 0 3px var(--c-acento),
+    0 0 24px 2px rgb(245 184 61 / 0.5),
+    0 18px 22px rgb(0 0 0 / 0.45);
+}
+
+.dado__candado {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 22px;
+  border-radius: var(--r-total);
+  translate: -50% 0;
+  background: var(--c-acento);
+  color: var(--c-sobre-acento);
+  box-shadow: 0 0 0 2px var(--c-fondo), 0 2px 0 3px var(--c-acento-oscuro);
+}
+
+.dado__candado .icono {
+  width: 14px;
+  height: 14px;
+}
+
+/* Tirada: vuelco + caras que cambian. Al parar, el dado "aterriza" */
+
+.dado__giro {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dado--interactivo:not(.dado--rodando) {
+    animation: dado-aterrizar 0.34s var(--rebote);
+  }
+
+  .dado--rodando {
+    animation: dado-tumbar 0.5s ease-in-out infinite;
+  }
+
+  .turno__dado:nth-child(2) .dado--rodando { animation-delay: -0.12s; animation-duration: 0.46s; }
+  .turno__dado:nth-child(3) .dado--rodando { animation-delay: -0.27s; animation-duration: 0.53s; }
+  .turno__dado:nth-child(4) .dado--rodando { animation-delay: -0.05s; animation-duration: 0.48s; }
+  .turno__dado:nth-child(5) .dado--rodando { animation-delay: -0.33s; animation-duration: 0.51s; }
+
+  .dado--rodando .dado__actual {
+    opacity: 0;
+  }
+
+  .dado__giro {
+    display: inline;
+  }
+
+  /* Cada cara se ve 1/6 del ciclo; --giro-desfase evita que los cinco dados vayan a la par */
+  .dado__giro-cara {
+    --giro-i: 0;
+    opacity: 0;
+    animation: dado-giro 0.36s linear infinite;
+    animation-delay: calc(var(--giro-desfase, 0s) - var(--giro-i) * 0.06s);
+  }
+
+  .dado__giro-cara:nth-child(2) { --giro-i: 1; }
+  .dado__giro-cara:nth-child(3) { --giro-i: 2; }
+  .dado__giro-cara:nth-child(4) { --giro-i: 3; }
+  .dado__giro-cara:nth-child(5) { --giro-i: 4; }
+  .dado__giro-cara:nth-child(6) { --giro-i: 5; }
+
+  .turno__dado:nth-child(2) { --giro-desfase: -0.13s; }
+  .turno__dado:nth-child(3) { --giro-desfase: -0.25s; }
+  .turno__dado:nth-child(4) { --giro-desfase: -0.07s; }
+  .turno__dado:nth-child(5) { --giro-desfase: -0.31s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dado--rodando .dado__actual {
+    opacity: 0.3;
+  }
+}
+
+@keyframes dado-tumbar {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-3px, -14px) rotate(-28deg); }
+  50% { transform: translate(3px, -3px) rotate(16deg); }
+  75% { transform: translate(-1px, -9px) rotate(-10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes dado-giro {
+  0%, 16.6% { opacity: 1; }
+  16.7%, 100% { opacity: 0; }
+}
+
+@keyframes dado-aterrizar {
+  0% { transform: scale(1.14) rotate(-7deg); }
+  55% { transform: scale(0.95) rotate(2deg); }
+  100% { transform: none; }
+}
+
+/* Mano de solo lectura */
+
+.mano {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0 0 3px;
+  list-style: none;
+}
+
+.mano__dado {
+  display: flex;
+}
+
+.mano--mediano {
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+/* Vidas */
+
+.vidas {
+  display: inline-flex;
+  gap: 0.12em;
+  color: var(--c-corazon);
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.vidas__vida {
+  display: inline-flex;
+  filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.35));
+}
+
+.vidas__vida--perdida {
+  color: var(--c-corazon-perdido);
+  filter: none;
+}
+
+.vidas__vida--rota {
+  animation: corazon-roto 1s 0.5s both;
+}
+
+@keyframes corazon-roto {
+  0% { color: var(--c-corazon); transform: none; }
+  25% { color: var(--c-corazon); transform: scale(1.4); }
+  40% { transform: scale(1.3) rotate(-14deg); }
+  55% { transform: scale(1.3) rotate(12deg); }
+  70% { color: var(--c-corazon); transform: scale(1.1) rotate(-6deg); }
+  100% { color: var(--c-corazon-perdido); transform: translateY(4px); }
+}
+
+/* Logo (dado-calavera) */
+
+.logo {
+  display: block;
+  overflow: visible;
+}
+
+.logo__cara { fill: var(--c-dado); }
+.logo__canto { fill: var(--c-dado-canto); }
+.logo__punto { fill: var(--c-dado-punto); }
+.logo__nariz { fill: var(--c-dado-uno); }
