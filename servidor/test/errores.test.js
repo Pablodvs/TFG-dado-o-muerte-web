@@ -26,7 +26,7 @@ test('los fallos de conexión con MySQL son 503 "No hay conexión con la base de
   for (const code of ['ECONNREFUSED', 'PROTOCOL_CONNECTION_LOST', 'ETIMEDOUT', 'ENOTFOUND', 'ER_ACCESS_DENIED_ERROR']) {
     const { status, body, log } = manejar(errorMysql(code))
     assert.equal(status, 503, code)
-    assert.deepEqual(body, { error: 'No hay conexión con la base de datos' })
+    assert.deepEqual(body, { error: 'No hay conexión con la base de datos', codigo: 'sinBaseDeDatos' })
     assert.match(log, new RegExp(code))
     assert.doesNotMatch(log, /db:init/)
   }
@@ -36,16 +36,19 @@ test('sin base de datos o sin tablas, el log sugiere "npm run db:init"', () => {
   for (const code of ['ER_BAD_DB_ERROR', 'ER_NO_SUCH_TABLE']) {
     const { status, body, log } = manejar(errorMysql(code))
     assert.equal(status, 503, code)
-    assert.deepEqual(body, { error: 'No hay conexión con la base de datos' })
+    assert.deepEqual(body, { error: 'No hay conexión con la base de datos', codigo: 'sinBaseDeDatos' })
     assert.match(log, /npm run db:init/)
   }
 })
 
 test('el resto de errores no cambian', () => {
-  assert.deepEqual(manejar(new ErrorHttp(409, 'No es tu turno')).body, { error: 'No es tu turno' })
+  assert.deepEqual(
+    manejar(new ErrorHttp(409, 'No es tu turno', 'noEsSuTurno')).body,
+    { error: 'No es tu turno', codigo: 'noEsSuTurno' },
+  )
   const otro = manejar(errorMysql('ER_DUP_ENTRY'))
   assert.equal(otro.status, 500)
-  assert.deepEqual(otro.body, { error: 'Error interno del servidor' })
+  assert.deepEqual(otro.body, { error: 'Error interno del servidor', codigo: 'errorInterno' })
 })
 
 test('un MySQL apagado de verdad acaba en 503', async () => {

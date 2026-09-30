@@ -62,6 +62,7 @@ async function plantar(partida, dados, tiradas = 1) {
 function assertError(res, status) {
   assert.equal(res.status, status, JSON.stringify(res.body))
   assert.equal(typeof res.body.error, 'string')
+  assert.equal(typeof res.body.codigo, 'string', 'el cliente traduce el error por su código')
 }
 
 test('API HTTP con MySQL', async (t) => {

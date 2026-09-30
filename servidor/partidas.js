@@ -16,20 +16,20 @@ function esIdValido(valor) {
 
 function validarIdPartida(texto) {
   const id = /^\d+$/.test(texto) ? Number(texto) : NaN
-  if (!esIdValido(id)) throw new ErrorHttp(400, 'Identificador de partida no válido')
+  if (!esIdValido(id)) throw new ErrorHttp(400, 'Identificador de partida no válido', 'idPartidaNoValido')
   return id
 }
 
 function validarNombres(jugadores) {
   if (!Array.isArray(jugadores) || jugadores.length < 2 || jugadores.length > 8) {
-    throw new ErrorHttp(400, 'Debe haber entre 2 y 8 jugadores')
+    throw new ErrorHttp(400, 'Debe haber entre 2 y 8 jugadores', 'numeroJugadores')
   }
   const nombres = jugadores.map((nombre) => (typeof nombre === 'string' ? nombre.trim() : ''))
   if (nombres.some((nombre) => nombre.length < 1 || nombre.length > 20)) {
-    throw new ErrorHttp(400, 'Cada nombre debe tener entre 1 y 20 caracteres')
+    throw new ErrorHttp(400, 'Cada nombre debe tener entre 1 y 20 caracteres', 'longitudNombre')
   }
   if (new Set(nombres.map((nombre) => nombre.toLowerCase())).size !== nombres.length) {
-    throw new ErrorHttp(400, 'Los nombres de los jugadores no se pueden repetir')
+    throw new ErrorHttp(400, 'Los nombres de los jugadores no se pueden repetir', 'nombresRepetidos')
   }
   return nombres
 }
@@ -37,17 +37,17 @@ function validarNombres(jugadores) {
 function validarJugada(cuerpo) {
   const { jugadorId, ronda, dados, tiradas } = cuerpo ?? {}
   if (!esIdValido(jugadorId)) {
-    throw new ErrorHttp(400, 'Identificador de jugador no válido')
+    throw new ErrorHttp(400, 'Identificador de jugador no válido', 'idJugadorNoValido')
   }
   if (!Number.isSafeInteger(ronda) || ronda < 1) {
-    throw new ErrorHttp(400, 'Número de ronda no válido')
+    throw new ErrorHttp(400, 'Número de ronda no válido', 'rondaNoValida')
   }
   if (!Array.isArray(dados) || dados.length !== 5 ||
       !dados.every((dado) => Number.isInteger(dado) && dado >= 1 && dado <= 6)) {
-    throw new ErrorHttp(400, 'Los dados deben ser 5 números enteros del 1 al 6')
+    throw new ErrorHttp(400, 'Los dados deben ser 5 números enteros del 1 al 6', 'dadosNoValidos')
   }
   if (!Number.isInteger(tiradas) || tiradas < 1 || tiradas > MAX_TIRADAS) {
-    throw new ErrorHttp(400, `El número de tiradas debe estar entre 1 y ${MAX_TIRADAS}`)
+    throw new ErrorHttp(400, `El número de tiradas debe estar entre 1 y ${MAX_TIRADAS}`, 'tiradasNoValidas')
   }
   return { jugadorId, ronda, dados, tiradas }
 }
@@ -173,19 +173,23 @@ function plantarse(partidaId, { jugadorId, ronda, dados, tiradas }) {
   return enTransaccion(async (conexion) => {
     // FOR UPDATE: dos peticiones simultáneas se procesan una detrás de otra
     const partida = await leerPartida(conexion, partidaId, { bloquear: true })
-    if (!partida) throw new ErrorHttp(404, 'La partida no existe')
-    if (partida.finalizada) throw new ErrorHttp(409, 'La partida ya ha terminado')
+    if (!partida) throw new ErrorHttp(404, 'La partida no existe', 'partidaNoExiste')
+    if (partida.finalizada) throw new ErrorHttp(409, 'La partida ya ha terminado', 'partidaTerminada')
     // Una petición repetida del último jugador de la ronda llegaría cuando ya empezó la
     // siguiente; si además perdió, volvería a ser su turno. La ronda la delata.
-    if (ronda !== partida.ronda) throw new ErrorHttp(409, 'La ronda ya ha terminado')
+    if (ronda !== partida.ronda) throw new ErrorHttp(409, 'La ronda ya ha terminado', 'rondaTerminada')
 
     const actual = partida.jugadores[partida.turno]
     if (!actual || actual.id !== jugadorId) {
-      throw new ErrorHttp(409, 'No es el turno de este jugador')
+      throw new ErrorHttp(409, 'No es el turno de este jugador', 'noEsSuTurno')
     }
     const tiradaMax = partida.tiradaMax ?? MAX_TIRADAS
     if (tiradas > tiradaMax) {
-      throw new ErrorHttp(400, `En esta ronda solo se puede tirar ${tiradaMax} ${tiradaMax === 1 ? 'vez' : 'veces'}`)
+      throw new ErrorHttp(
+        400,
+        `En esta ronda solo se puede tirar ${tiradaMax} ${tiradaMax === 1 ? 'vez' : 'veces'}`,
+        'demasiadasTiradas',
+      )
     }
 
     // La mano es la de los 5 dados; se guardan tal cual (con los comodines)
@@ -224,7 +228,7 @@ router.get('/health', async (req, res) => {
     await pool.query('SELECT 1')
   } catch (err) {
     console.error('Health check:', err.message)
-    throw new ErrorHttp(500, 'No hay conexión con la base de datos')
+    throw new ErrorHttp(500, 'No hay conexión con la base de datos', 'sinBaseDeDatos')
   }
   res.json({ ok: true })
 })
@@ -236,7 +240,7 @@ router.post('/partidas', async (req, res) => {
 
 router.get('/partidas/:id', async (req, res) => {
   const partida = await leerPartida(pool, validarIdPartida(req.params.id))
-  if (!partida) throw new ErrorHttp(404, 'La partida no existe')
+  if (!partida) throw new ErrorHttp(404, 'La partida no existe', 'partidaNoExiste')
   res.json(estadoPartida(partida))
 })
 
