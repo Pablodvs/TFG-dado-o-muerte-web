@@ -1,0 +1,38 @@
+# Dice or Die con su propio MySQL. Sirve para el build pack "Docker Compose" de Coolify
+# y para arrancarlo en local (docker compose up, con DB_PASSWORD en un .env junto a este fichero).
+# En Coolify el dominio se asigna al servicio "app" con el puerto interno: https://dado.ejemplo.com:3001
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-dado}
+      DB_PASSWORD: ${DB_PASSWORD:?}
+      DB_NAME: ${DB_NAME:-dado-o-muerte}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-dado-o-muerte}
+      MYSQL_USER: ${DB_USER:-dado}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?}
+      # La app no usa root: se genera una contraseña aleatoria (sale en el log del primer arranque)
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - mysql-datos:/var/lib/mysql
+    healthcheck:
+      # Por TCP: mientras MySQL se inicializa solo escucha en el socket y aún no está listo
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+volumes:
+  mysql-datos:
