@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Cargando from '../componentes/Cargando';
@@ -7,27 +8,20 @@ import Icono from '../componentes/Icono';
 import Mano from '../componentes/Mano';
 import useArmado from '../hooks/useArmado';
 import usePartidaGuardada from '../hooks/usePartidaGuardada';
+import { textoError } from '../api';
 import clases from '../lib/clases';
 import { describirDados } from '../lib/puntuacion';
 import { crearPartida, salirDePartida, selectPartida } from '../slices/partida';
 
 // Para quien pierde. Se elige según la partida, así no cambia al volver a pintar
-const CASTIGOS = [
-    'Te toca recoger la mesa.',
-    'Invitas a la próxima ronda (de lo que sea).',
-    'Los demás eligen la música durante la próxima hora.',
-    'Cuenta un chiste malo. Los demás deciden si vale.',
-    'Hoy friegas tú.',
-    'Imita a una gallina durante diez segundos.',
-    'Eliges la próxima peli… de la lista que te hagan los demás.',
-    'Sirves las bebidas hasta la revancha.',
-];
-
-function castigoPara(partidaId) {
-    return CASTIGOS[Math.abs(Number(partidaId) || 0) % CASTIGOS.length];
+// (ni al cambiar de idioma: todos tienen la misma lista, en el mismo orden)
+function castigoPara(t, partidaId) {
+    const castigos = t('final.castigos', { returnObjects: true });
+    return castigos[Math.abs(Number(partidaId) || 0) % castigos.length];
 }
 
 export default function PantallaFinal() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { partidaId, estado, error, reintentar } = usePartidaGuardada();
@@ -42,8 +36,8 @@ export default function PantallaFinal() {
         return (
             <main className="final final--cargando">
                 {error
-                    ? <ErrorConexion mensaje={error.mensaje} onReintentar={reintentar} />
-                    : <Cargando texto="Cargando resultado…" />}
+                    ? <ErrorConexion mensaje={textoError(t, error)} onReintentar={reintentar} />
+                    : <Cargando texto={t('final.cargando')} />}
             </main>
         );
     }
@@ -68,23 +62,25 @@ export default function PantallaFinal() {
         <main className="final">
             <section className="final__foco" aria-labelledby="final-titulo">
                 <Icono nombre="calavera" className="final__calavera" />
-                <h1 id="final-titulo" className="final__titulo">Fin de la partida</h1>
+                <h1 id="final-titulo" className="final__titulo">{t('final.titulo')}</h1>
                 {perdedor && (
                     <p className="final__perdedor">
-                        <strong className="final__perdedor-nombre">{perdedor.nombre}</strong> pierde la partida
+                        <Trans i18nKey="final.pierde">
+                            <strong className="final__perdedor-nombre">{{ nombre: perdedor.nombre }}</strong>
+                        </Trans>
                     </p>
                 )}
                 {perdedor && (
                     <p className="final__castigo">
-                        <span className="final__castigo-etiqueta">Castigo</span>
-                        {castigoPara(estado.id)}
+                        <span className="final__castigo-etiqueta">{t('final.castigo')}</span>
+                        {castigoPara(t, estado.id)}
                     </p>
                 )}
             </section>
 
             <div className="final__acciones">
                 {errorCreacion && (
-                    <p className="final__error" role="alert">{errorCreacion.mensaje}</p>
+                    <p className="final__error" role="alert">{textoError(t, errorCreacion)}</p>
                 )}
                 <button
                     type="button"
@@ -94,7 +90,7 @@ export default function PantallaFinal() {
                     aria-disabled={!armado || undefined}
                 >
                     <Icono nombre="tirar" />
-                    {creando ? 'Creando partida…' : 'Revancha'}
+                    {t(creando ? 'comun.creandoPartida' : 'final.revancha')}
                 </button>
                 <button
                     type="button"
@@ -102,7 +98,7 @@ export default function PantallaFinal() {
                     onClick={armado ? irAlMenu : undefined}
                     aria-disabled={!armado || undefined}
                 >
-                    Menú principal
+                    {t('comun.menuPrincipal')}
                 </button>
             </div>
 
@@ -110,7 +106,7 @@ export default function PantallaFinal() {
                 {ultimaRonda && (
                     <section className="final__ultima-ronda tarjeta" aria-labelledby="final-ultima-ronda-titulo">
                         <h2 id="final-ultima-ronda-titulo" className="final__subtitulo">
-                            Última ronda ({ultimaRonda.ronda})
+                            {t('final.ultimaRonda', { ronda: ultimaRonda.ronda })}
                         </h2>
                         <p className="final__ultima-jugada">
                             {ultimaRonda.perdedor.nombre}: <strong>{describirDados(ultimaRonda.dados)}</strong>
@@ -120,7 +116,7 @@ export default function PantallaFinal() {
                 )}
 
                 <section className="final__clasificacion tarjeta" aria-labelledby="final-clasificacion-titulo">
-                    <h2 id="final-clasificacion-titulo" className="final__subtitulo">Clasificación</h2>
+                    <h2 id="final-clasificacion-titulo" className="final__subtitulo">{t('final.clasificacion')}</h2>
                     <Clasificacion jugadores={estado.jugadores} perdedorId={perdedor?.id} />
                 </section>
             </div>

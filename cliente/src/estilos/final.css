@@ -185,7 +185,7 @@
 }
 
 .clasificacion__jugador::before {
-  content: attr(value) "º";
+  content: attr(data-puesto);
   order: -1;
   width: 2em;
   color: var(--c-texto-tenue);

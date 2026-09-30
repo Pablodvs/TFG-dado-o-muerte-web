@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Icono from './Icono';
 import clases from '../lib/clases';
 
@@ -37,7 +38,8 @@ export default function Dado({
     disabled = false,
     tamano = 'mediano',
 }) {
-    const etiqueta = `Dado: ${valor ?? 'sin tirar'}${guardado ? ', guardado' : ''}`;
+    const { t } = useTranslation();
+    const etiqueta = valor === null ? t('dado.sinTirar') : t(guardado ? 'dado.guardado' : 'dado.valor', { valor });
     const clase = clases(
         'dado',
         `dado--${tamano}`,

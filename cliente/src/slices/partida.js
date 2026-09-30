@@ -15,7 +15,7 @@ const initialState = {
 };
 
 function errorDe(action) {
-    return action.payload ?? { status: null, mensaje: action.error?.message || 'Error inesperado' };
+    return action.payload ?? { status: null, codigo: 'inesperado', mensaje: null };
 }
 
 export const crearPartida = createAsyncThunk(

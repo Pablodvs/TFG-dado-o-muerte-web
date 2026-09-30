@@ -1,5 +1,6 @@
 // Espejo en el cliente de la puntuación del servidor (el servidor es la
 // autoridad; aquí solo se usa para mostrar la jugada mientras se tira).
+import i18n from '../i18n';
 
 const ESCALERA = '2,3,4,5,6';
 
@@ -39,12 +40,12 @@ export function puntuar(dados) {
     return { puntuacion: cantidad * 10 + valor, tipo: 'grupo', cantidad, valor };
 }
 
-const NOMBRES_GRUPO = { 2: 'Pareja', 3: 'Trío', 4: 'Póker', 5: 'Repóker' };
+const NOMBRES_GRUPO = { 2: 'pareja', 3: 'trio', 4: 'poker', 5: 'repoker' };
 
-// Resultado de puntuar() → "Escalera", "Trío de 5"...
+// Resultado de puntuar() → "Escalera", "Trío de 5"... en el idioma actual
 export function describirJugada({ puntuacion, cantidad, valor }) {
-    if (puntuacion === PUNTUACION_ESCALERA) return 'Escalera';
-    return `${NOMBRES_GRUPO[cantidad]} de ${valor}`;
+    if (puntuacion === PUNTUACION_ESCALERA) return i18n.t('jugadas.escalera');
+    return i18n.t(`jugadas.${NOMBRES_GRUPO[cantidad]}`, { valor });
 }
 
 // Como describirJugada, pero a partir de los dados; null si la tirada no es válida

@@ -13,6 +13,7 @@ English version: [README.md](README.md)
 - Resumen de ronda que indica quién pierde una vida y por qué.
 - La partida sobrevive a recargar la página (el estado se guarda en el servidor y en el navegador).
 - Revancha con los mismos jugadores.
+- En castellano e inglés: se elige según el idioma del navegador y se puede cambiar en cualquier momento desde la cabecera.
 
 ## Cómo se juega
 
@@ -62,7 +63,7 @@ Los jugadores 1 y 3 empatan con la jugada más baja, así que **pierde el jugado
 
 ## Tecnologías
 
-- **Cliente** (`cliente/`): React 18 + Redux Toolkit (Create React App).
+- **Cliente** (`cliente/`): React 18 + Redux Toolkit (Create React App), con i18next para las traducciones (`cliente/src/idiomas/`).
 - **Servidor** (`servidor/`): Express 5 + MySQL (`mysql2`). El servidor es quien manda en la puntuación y en los turnos.
 
 ## Puesta en marcha

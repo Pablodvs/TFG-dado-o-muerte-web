@@ -13,6 +13,7 @@ Versión en español: [README_ES.md](README_ES.md)
 - Round summary showing who lost a life and why.
 - The game survives page reloads (state is kept on the server and in the browser).
 - Rematch with the same players.
+- Spanish and English: picked from the browser language, and switchable at any time from the header.
 
 ## How to play
 
@@ -58,11 +59,11 @@ Players 1 and 3 tie with the lowest hand, so **Player 3 loses** because they pla
 | 5 5 | 5 5 5 | 5 5 5 5 | 5 5 5 5 5 |
 | 6 6 | 6 6 6 | 6 6 6 6 | 6 6 6 6 6 |
 
-**Highest: Straight (2 3 4 5 6).** In the app the hands are named Pareja, Trío, Póker, Repóker and Escalera. Internally a group scores `size * 10 + value` (e.g. three 2s = 32) and a straight scores 60.
+**Highest: Straight (2 3 4 5 6).** In Spanish the app names them Pareja, Trío, Póker, Repóker and Escalera. Internally a group scores `size * 10 + value` (e.g. three 2s = 32) and a straight scores 60.
 
 ## Stack
 
-- **Client** (`cliente/`): React 18 + Redux Toolkit (Create React App).
+- **Client** (`cliente/`): React 18 + Redux Toolkit (Create React App), with i18next for translations (`cliente/src/idiomas/`).
 - **Server** (`servidor/`): Express 5 + MySQL (`mysql2`). The server is the authority on scoring and turn order.
 
 ## Getting started

@@ -4,6 +4,7 @@ import { NUM_DADOS, TIRADAS_MAXIMAS } from './reglas';
 
 const CLAVE_PARTIDA = 'dadoOMuerte:partidaId';
 const CLAVE_TURNO = 'dadoOMuerte:turno';
+const CLAVE_IDIOMA = 'dadoOMuerte:idioma';
 
 function leer(clave) {
     try {
@@ -70,4 +71,13 @@ export function guardarTurno(clave, { dados, tirada }) {
 
 export function borrarTurno() {
     escribir(CLAVE_TURNO, null);
+}
+
+// El idioma elegido a mano (null si nunca se ha cambiado)
+export function leerIdioma() {
+    return leer(CLAVE_IDIOMA);
+}
+
+export function guardarIdioma(idioma) {
+    escribir(CLAVE_IDIOMA, idioma);
 }

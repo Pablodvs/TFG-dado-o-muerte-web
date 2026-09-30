@@ -51,7 +51,7 @@ test('crearPartida guarda el mensaje del servidor si falla', async () => {
 
     await store.dispatch(crearPartida(['Ana', 'ana']));
 
-    expect(store.getState().partida.errorCreacion).toEqual({ status: 400, mensaje: 'Los nombres no pueden repetirse' });
+    expect(store.getState().partida.errorCreacion).toEqual({ status: 400, codigo: null, mensaje: 'Los nombres no pueden repetirse' });
     expect(leerPartidaId()).toBeNull();
 });
 
@@ -62,7 +62,7 @@ test('cargarPartida con 404 olvida la partida guardada', async () => {
 
     await store.dispatch(cargarPartida(99));
 
-    expect(store.getState().partida.errorCarga).toEqual({ status: 404, mensaje: 'Partida no encontrada' });
+    expect(store.getState().partida.errorCarga).toEqual({ status: 404, codigo: null, mensaje: 'Partida no encontrada' });
     expect(leerPartidaId()).toBeNull();
 });
 
@@ -74,7 +74,7 @@ test('cargarPartida sin conexión conserva la partida guardada', async () => {
     await store.dispatch(cargarPartida(12));
 
     expect(store.getState().partida.errorCarga.status).toBeNull();
-    expect(store.getState().partida.errorCarga.mensaje).toMatch(/No se puede conectar/);
+    expect(store.getState().partida.errorCarga.codigo).toBe('sinConexion');
     expect(leerPartidaId()).toBe(12);
 });
 
@@ -127,7 +127,7 @@ test('si tras un 409 tampoco se puede recargar, se muestra ese error', async () 
 
     await store.dispatch(plantarse({ jugadorId: 5, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 2 }));
 
-    expect(store.getState().partida.errorJugada.mensaje).toMatch(/No se puede conectar/);
+    expect(store.getState().partida.errorJugada.codigo).toBe('sinConexion');
 });
 
 test('plantarse muestra los errores de validación del servidor', async () => {
@@ -136,7 +136,7 @@ test('plantarse muestra los errores de validación del servidor', async () => {
 
     await store.dispatch(plantarse({ jugadorId: 6, ronda: 1, dados: [2, 2, 5, 5, 5], tiradas: 3 }));
 
-    expect(store.getState().partida.errorJugada).toEqual({ status: 400, mensaje: 'En esta ronda solo se puede tirar 2 veces' });
+    expect(store.getState().partida.errorJugada).toEqual({ status: 400, codigo: null, mensaje: 'En esta ronda solo se puede tirar 2 veces' });
     expect(api.obtenerPartida).not.toHaveBeenCalled();
 });
 

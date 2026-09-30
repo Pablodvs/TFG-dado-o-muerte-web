@@ -1,17 +1,19 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import Icono from './Icono';
 import Vidas from './Vidas';
 import useArmado from '../hooks/useArmado';
 import clases from '../lib/clases';
 import { describirDados } from '../lib/puntuacion';
-import { plural, TIRADAS_MAXIMAS } from '../lib/reglas';
+import { TIRADAS_MAXIMAS } from '../lib/reglas';
 
 // Pantalla intermedia antes de cada turno: el móvil cambia de manos.
 // Ocupa toda la pantalla para que nadie vea nada hasta que el siguiente la toque.
 // Se pinta en su propia capa dentro de <body> y deja inerte todo lo demás
 // (cabecera incluida), así ni el ratón ni el teclado llegan a lo de debajo.
 export default function PasarMovil({ jugador, abreRonda, tiradaMax, ronda, peorTirada, onEmpezar }) {
+    const { t } = useTranslation();
     const boton = useRef(null);
     const [capa] = useState(() => document.createElement('div'));
     // Un doble toque en la pantalla anterior no debe empezar el turno de otro.
@@ -32,8 +34,8 @@ export default function PasarMovil({ jugador, abreRonda, tiradaMax, ronda, peorT
     }, [capa]);
 
     const detalle = abreRonda
-        ? `Abres la ronda: puedes tirar hasta ${TIRADAS_MAXIMAS} veces.`
-        : `Tienes ${plural(tiradaMax, 'tirada', 'tiradas')}.`;
+        ? t('pasarMovil.abresRonda', { count: TIRADAS_MAXIMAS })
+        : t('pasarMovil.tiradas', { count: tiradaMax });
     const aSuperar = peorTirada && describirDados(peorTirada.dados);
 
     return createPortal(
@@ -45,21 +47,24 @@ export default function PasarMovil({ jugador, abreRonda, tiradaMax, ronda, peorT
                 onClick={armado ? onEmpezar : undefined}
                 aria-disabled={!armado || undefined}
             >
-                {ronda && <span className="pasar-movil__ronda">Ronda {ronda}</span>}{' '}
-                <span className="pasar-movil__aviso">Turno de</span>{' '}
+                {ronda && <span className="pasar-movil__ronda">{t('comun.ronda', { ronda })}</span>}{' '}
+                <span className="pasar-movil__aviso">{t('pasarMovil.aviso')}</span>{' '}
                 <span id="pasar-movil-nombre" className="pasar-movil__nombre">{jugador.nombre}</span>{' '}
                 <Vidas vidas={jugador.vidas} />{' '}
                 <span className="pasar-movil__detalle">{detalle}</span>{' '}
                 {aSuperar && (
                     <span className="pasar-movil__superar">
-                        A superar: <strong>{aSuperar}</strong> de {peorTirada.nombre}
+                        <Trans i18nKey="pasarMovil.aSuperar">
+                            <strong>{{ jugada: aSuperar }}</strong>
+                            {{ nombre: peorTirada.nombre }}
+                        </Trans>
                     </span>
                 )}{' '}
                 <span className="pasar-movil__accion">
                     <Icono nombre="mano" />
-                    <span className="pasar-movil__accion-texto">Toca para empezar</span>
+                    <span className="pasar-movil__accion-texto">{t('pasarMovil.empezar')}</span>
                 </span>
-                <span className="pasar-movil__nota">Que no mire nadie más</span>
+                <span className="pasar-movil__nota">{t('pasarMovil.nota')}</span>
             </button>
         </section>,
         capa,

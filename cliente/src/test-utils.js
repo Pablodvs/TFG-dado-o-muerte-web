@@ -41,10 +41,12 @@ export function estadoPartida(extra = {}) {
     };
 }
 
-export function errorHttp(status, mensaje) {
+// codigo: el que manda el servidor para traducir el error (opcional)
+export function errorHttp(status, mensaje, codigo) {
+    const data = mensaje ? { error: mensaje, ...(codigo && { codigo }) } : '';
     return Object.assign(new Error(`HTTP ${status}`), {
         isAxiosError: true,
-        response: { status, data: mensaje ? { error: mensaje } : '' },
+        response: { status, data },
     });
 }
 

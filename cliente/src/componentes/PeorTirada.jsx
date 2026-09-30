@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Icono from './Icono';
 import Mano from './Mano';
 import clases from '../lib/clases';
@@ -5,6 +6,7 @@ import { describirDados } from '../lib/puntuacion';
 
 // La jugada que va perdiendo la ronda: hay que superarla (empatar no basta)
 export default function PeorTirada({ peorTirada }) {
+    const { t } = useTranslation();
     return (
         <section
             className={clases('peor-tirada', !peorTirada && 'peor-tirada--vacia')}
@@ -12,19 +14,19 @@ export default function PeorTirada({ peorTirada }) {
         >
             <Icono nombre="calavera" className="peor-tirada__icono" />
             <div className="peor-tirada__cuerpo">
-                <h2 id="peor-tirada-titulo" className="peor-tirada__titulo">Tirada a superar</h2>
+                <h2 id="peor-tirada-titulo" className="peor-tirada__titulo">{t('peorTirada.titulo')}</h2>
                 {peorTirada ? (
                     <>
                         <p className="peor-tirada__detalle">
                             <span className="peor-tirada__nombre">{peorTirada.nombre}</span>:{' '}
                             <strong className="peor-tirada__jugada">
-                                {describirDados(peorTirada.dados) ?? `${peorTirada.puntuacion} puntos`}
+                                {describirDados(peorTirada.dados) ?? t('comun.puntos', { count: peorTirada.puntuacion })}
                             </strong>
                         </p>
-                        <p className="peor-tirada__nota">Si empatas, pierdes tú.</p>
+                        <p className="peor-tirada__nota">{t('peorTirada.nota')}</p>
                     </>
                 ) : (
-                    <p className="peor-tirada__vacia">Nadie ha jugado todavía en esta ronda.</p>
+                    <p className="peor-tirada__vacia">{t('peorTirada.vacia')}</p>
                 )}
             </div>
             {peorTirada && <Mano dados={peorTirada.dados} className="peor-tirada__dados" />}

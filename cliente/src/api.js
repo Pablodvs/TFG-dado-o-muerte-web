@@ -35,22 +35,31 @@ export async function plantarse(id, { jugadorId, ronda, dados, tiradas }) {
     return { partida: data.partida, rondaTerminada: data.rondaTerminada ?? null };
 }
 
-// Convierte cualquier fallo en { status, mensaje } serializable para Redux.
+// Convierte cualquier fallo en { status, codigo, mensaje } serializable para Redux.
 // status es null cuando ni siquiera hubo respuesta (sin conexión, servidor caído).
+// codigo es la clave de errores.* con la que se traduce (la manda el servidor o se
+// deduce aquí); mensaje, el texto del servidor, por si su código no se conoce.
 export function describirError(error) {
     const respuesta = error?.response;
     if (error?.respuestaInesperada) {
-        return { status: null, mensaje: 'El servidor ha respondido algo inesperado. ¿Está en marcha la API?' };
+        return { status: null, codigo: 'respuestaInesperada', mensaje: null };
     }
     if (!respuesta) {
-        const mensaje = error?.isAxiosError || error?.code === 'ECONNABORTED'
-            ? 'No se puede conectar con el servidor. Comprueba la conexión e inténtalo de nuevo.'
-            : 'Ha ocurrido un error inesperado. Inténtalo de nuevo.';
-        return { status: null, mensaje };
+        const codigo = error?.isAxiosError || error?.code === 'ECONNABORTED' ? 'sinConexion' : 'inesperado';
+        return { status: null, codigo, mensaje: null };
     }
     const { status, data } = respuesta;
-    if (typeof data?.error === 'string' && data.error) return { status, mensaje: data.error };
-    if (status === 404) return { status, mensaje: 'Esa partida no existe.' };
-    if (status >= 500) return { status, mensaje: 'El servidor no está disponible ahora mismo. Inténtalo de nuevo en un momento.' };
-    return { status, mensaje: 'El servidor ha rechazado la petición.' };
+    const mensaje = typeof data?.error === 'string' && data.error ? data.error : null;
+    if (typeof data?.codigo === 'string' && data.codigo) return { status, codigo: data.codigo, mensaje };
+    // Sin código: el texto del servidor tal cual o, si no hay, uno según el estado
+    if (mensaje) return { status, codigo: null, mensaje };
+    if (status === 404) return { status, codigo: 'noExiste', mensaje: null };
+    if (status >= 500) return { status, codigo: 'servidorCaido', mensaje: null };
+    return { status, codigo: 'rechazada', mensaje: null };
+}
+
+// El resultado de describirError en el idioma actual
+export function textoError(t, { codigo, mensaje }) {
+    const porDefecto = mensaje || t('errores.inesperado');
+    return codigo ? t(`errores.${codigo}`, { defaultValue: porDefecto }) : porDefecto;
 }

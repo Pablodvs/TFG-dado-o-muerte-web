@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Cargando from '../componentes/Cargando';
@@ -10,6 +11,7 @@ import ReglasJuego from '../componentes/ReglasJuego';
 import ResumenRonda from '../componentes/ResumenRonda';
 import Turno from '../componentes/Turno';
 import usePartidaGuardada from '../hooks/usePartidaGuardada';
+import { textoError } from '../api';
 import clases from '../lib/clases';
 import {
     cerrarResumenRonda,
@@ -21,6 +23,7 @@ import {
 } from '../slices/partida';
 
 export default function PantallaPartida() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { partidaId, estado, error, reintentar } = usePartidaGuardada();
@@ -35,8 +38,8 @@ export default function PantallaPartida() {
         return (
             <main className="partida partida--cargando">
                 {error
-                    ? <ErrorConexion mensaje={error.mensaje} onReintentar={reintentar} />
-                    : <Cargando texto="Cargando partida…" />}
+                    ? <ErrorConexion mensaje={textoError(t, error)} onReintentar={reintentar} />
+                    : <Cargando texto={t('partida.cargando')} />}
             </main>
         );
     }
@@ -51,8 +54,8 @@ export default function PantallaPartida() {
         return (
             <main className="partida partida--cargando">
                 <ErrorConexion
-                    titulo="La partida está en un estado inesperado"
-                    mensaje="Prueba a cargarla de nuevo."
+                    titulo={t('partida.estadoInesperado')}
+                    mensaje={t('partida.pruebaDeNuevo')}
                     onReintentar={reintentar}
                 />
             </main>
@@ -99,11 +102,11 @@ export default function PantallaPartida() {
     return (
         <main className={clases('partida', `partida--${fase}`)}>
             <header className="partida__cabecera">
-                <h1 className="partida__ronda">Ronda {rondaTerminada?.ronda ?? estado.ronda}</h1>
+                <h1 className="partida__ronda">{t('comun.ronda', { ronda: rondaTerminada?.ronda ?? estado.ronda })}</h1>
                 <p className="partida__detalle">
                     {rondaTerminada
-                        ? 'Ronda terminada'
-                        : `Turno ${estado.turno + 1} de ${estado.jugadores.length}`}
+                        ? t('partida.rondaTerminada')
+                        : t('partida.turnoDeTotal', { turno: estado.turno + 1, total: estado.jugadores.length })}
                 </p>
             </header>
 

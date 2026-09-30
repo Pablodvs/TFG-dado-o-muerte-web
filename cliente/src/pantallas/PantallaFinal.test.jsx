@@ -102,4 +102,5 @@ test('con las mismas vidas se comparte puesto en la clasificación', async () =>
     const filas = within(clasificacion).getAllByRole('listitem');
     expect(nombresDe(clasificacion)).toEqual(['Ana', 'Eva', 'Pablo', 'Luis']);
     expect(filas.map(li => li.getAttribute('value'))).toEqual(['1', '2', '2', '4']);
+    expect(filas.map(li => li.dataset.puesto)).toEqual(['1º', '2º', '2º', '4º']);
 });

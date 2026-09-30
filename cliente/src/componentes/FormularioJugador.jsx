@@ -1,9 +1,11 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Icono from './Icono';
 import { MAX_LONGITUD_NOMBRE } from '../lib/reglas';
 
 // onAnadir() devuelve true si el nombre se ha añadido
 export default function FormularioJugador({ borrador, error, completo, onCambiar, onAnadir }) {
+    const { t } = useTranslation();
     const entrada = useRef(null);
 
     const enviar = (evento) => {
@@ -15,7 +17,7 @@ export default function FormularioJugador({ borrador, error, completo, onCambiar
     return (
         <form className="form-jugador" onSubmit={enviar} noValidate>
             <label htmlFor="form-jugador-nombre" className="form-jugador__etiqueta">
-                Nombre del jugador
+                {t('formularioJugador.etiqueta')}
             </label>
             <div className="form-jugador__fila">
                 <input
@@ -29,14 +31,14 @@ export default function FormularioJugador({ borrador, error, completo, onCambiar
                     autoComplete="off"
                     autoCapitalize="words"
                     enterKeyHint="done"
-                    placeholder="Ej.: Ana"
+                    placeholder={t('formularioJugador.ejemplo')}
                     disabled={completo}
                     aria-invalid={Boolean(error)}
                     aria-describedby={error ? 'form-jugador-error' : undefined}
                 />
                 <button type="submit" className="boton boton--secundario form-jugador__anadir" disabled={completo}>
                     <Icono nombre="mas" />
-                    Añadir
+                    {t('formularioJugador.anadir')}
                 </button>
             </div>
             {error && (

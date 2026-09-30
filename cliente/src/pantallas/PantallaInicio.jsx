@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import FormularioJugador from '../componentes/FormularioJugador';
@@ -8,14 +9,15 @@ import PartidaEnCurso from '../componentes/PartidaEnCurso';
 import ReglasJuego from '../componentes/ReglasJuego';
 import useListaJugadores from '../hooks/useListaJugadores';
 import usePartidaGuardada from '../hooks/usePartidaGuardada';
-import { MAX_JUGADORES, MIN_JUGADORES, plural } from '../lib/reglas';
+import { textoError } from '../api';
+import { MAX_JUGADORES, MIN_JUGADORES } from '../lib/reglas';
 import { crearPartida, selectPartida } from '../slices/partida';
 
-function textoRecuento(n) {
-    if (n === 0) return `Apunta entre ${MIN_JUGADORES} y ${MAX_JUGADORES} jugadores para empezar.`;
-    if (n < MIN_JUGADORES) return `Falta al menos ${plural(MIN_JUGADORES - n, 'jugador', 'jugadores')} más.`;
-    if (n < MAX_JUGADORES) return `¡Listos para jugar! Aún caben ${MAX_JUGADORES - n} más.`;
-    return `Mesa completa: ${n} jugadores.`;
+function textoRecuento(t, n) {
+    if (n === 0) return t('inicio.recuento.vacio', { min: MIN_JUGADORES, max: MAX_JUGADORES });
+    if (n < MIN_JUGADORES) return t('inicio.recuento.faltan', { count: MIN_JUGADORES - n });
+    if (n < MAX_JUGADORES) return t('inicio.recuento.caben', { count: MAX_JUGADORES - n });
+    return t('inicio.recuento.completa', { total: n });
 }
 
 // En escritorio las reglas caben abiertas al lado del formulario
@@ -24,6 +26,7 @@ function pantallaAncha() {
 }
 
 export default function PantallaInicio() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const lista = useListaJugadores();
@@ -71,11 +74,11 @@ export default function PantallaInicio() {
             {hayPartidaEnCurso && <PartidaEnCurso estado={guardada.estado} />}
 
             <section className="inicio__nueva tarjeta" aria-labelledby="inicio-titulo">
-                <h1 id="inicio-titulo" className="inicio__titulo">Nueva partida</h1>
+                <h1 id="inicio-titulo" className="inicio__titulo">{t('inicio.titulo')}</h1>
 
                 <section className="inicio__jugadores" aria-labelledby="inicio-jugadores-titulo">
                     <div className="inicio__encabezado">
-                        <h2 id="inicio-jugadores-titulo" className="inicio__subtitulo">Jugadores</h2>
+                        <h2 id="inicio-jugadores-titulo" className="inicio__subtitulo">{t('inicio.jugadores')}</h2>
                         <span className="inicio__cupo" aria-hidden="true">
                             {lista.jugadores.length}/{MAX_JUGADORES}
                         </span>
@@ -88,12 +91,12 @@ export default function PantallaInicio() {
                         onAnadir={lista.anadir}
                     />
                     <ListaJugadores jugadores={lista.jugadores} onQuitar={lista.quitar} />
-                    <p id="inicio-recuento" className="inicio__recuento">{textoRecuento(lista.jugadores.length)}</p>
+                    <p id="inicio-recuento" className="inicio__recuento">{textoRecuento(t, lista.jugadores.length)}</p>
                 </section>
 
                 <div className="inicio__acciones">
                     {errorCreacion && (
-                        <p className="inicio__error" role="alert">{errorCreacion.mensaje}</p>
+                        <p className="inicio__error" role="alert">{textoError(t, errorCreacion)}</p>
                     )}
                     {pideConfirmar ? (
                         <div
@@ -108,11 +111,12 @@ export default function PantallaInicio() {
                                 tabIndex={-1}
                                 ref={enfocarPregunta}
                             >
-                                ¿Empezar una partida nueva?
+                                {t('inicio.confirmar.pregunta')}
                             </p>
                             <p id="inicio-confirmar-detalle" className="inicio__confirmar-detalle">
-                                La partida a medias{guardada.estado ? ` (ronda ${guardada.estado.ronda})` : ''} se
-                                abandonará y ya no se podrá continuar.
+                                {guardada.estado
+                                    ? t('inicio.confirmar.detalleRonda', { ronda: guardada.estado.ronda })
+                                    : t('inicio.confirmar.detalle')}
                             </p>
                             <div className="inicio__confirmar-botones">
                                 <button
@@ -121,7 +125,7 @@ export default function PantallaInicio() {
                                     onClick={cancelar}
                                     disabled={creando}
                                 >
-                                    Cancelar
+                                    {t('inicio.confirmar.cancelar')}
                                 </button>
                                 <button
                                     type="button"
@@ -129,7 +133,7 @@ export default function PantallaInicio() {
                                     onClick={empezar}
                                     disabled={!lista.valido || creando}
                                 >
-                                    {creando ? 'Creando partida…' : 'Sí, empezar otra'}
+                                    {t(creando ? 'comun.creandoPartida' : 'inicio.confirmar.aceptar')}
                                 </button>
                             </div>
                         </div>
@@ -143,7 +147,7 @@ export default function PantallaInicio() {
                             aria-describedby="inicio-recuento"
                         >
                             <Icono nombre="tirar" />
-                            {creando ? 'Creando partida…' : 'Empezar partida'}
+                            {t(creando ? 'comun.creandoPartida' : 'inicio.empezar')}
                         </button>
                     )}
                 </div>

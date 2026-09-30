@@ -1,9 +1,43 @@
 /* Cabecera, pantalla de inicio y reglas */
 
 .cabecera {
+  position: relative;
   width: min(100% - 2 * var(--gutter), var(--ancho-columna));
   margin-inline: auto;
   padding: calc(var(--seguro-arriba) + var(--e-3)) 0 var(--e-2);
+}
+
+/* Selector de idioma: arriba a la derecha, a la altura de la marca */
+
+.idioma {
+  position: absolute;
+  top: calc(var(--seguro-arriba) + var(--e-3));
+  right: 0;
+  display: flex;
+  padding: 3px;
+  border: 1px solid var(--c-borde);
+  border-radius: var(--r-total);
+  background: var(--c-hundido);
+}
+
+.idioma__opcion {
+  min-width: 44px;
+  min-height: 36px;
+  margin: 0;
+  padding: 0 var(--e-2);
+  border: 0;
+  border-radius: var(--r-total);
+  background: transparent;
+  color: var(--c-texto-tenue);
+  font-size: var(--t-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.idioma__opcion[aria-pressed="true"] {
+  background: var(--c-superficie-alta);
+  color: var(--c-acento);
 }
 
 .cabecera__marca {

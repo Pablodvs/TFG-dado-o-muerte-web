@@ -1,0 +1,201 @@
+{
+  "comun": {
+    "cargando": "Cargando…",
+    "creandoPartida": "Creando partida…",
+    "menuPrincipal": "Menú principal",
+    "reintentar": "Reintentar",
+    "ronda": "Ronda {{ronda}}",
+    "puntos_one": "{{count}} punto",
+    "puntos_other": "{{count}} puntos",
+    "vidas_one": "{{count}} vida",
+    "vidas_other": "{{count}} vidas"
+  },
+  "cabecera": {
+    "lema": "Cinco dados, tres vidas y un solo perdedor."
+  },
+  "idioma": {
+    "etiqueta": "Idioma"
+  },
+  "jugadas": {
+    "escalera": "Escalera",
+    "pareja": "Pareja de {{valor}}",
+    "trio": "Trío de {{valor}}",
+    "poker": "Póker de {{valor}}",
+    "repoker": "Repóker de {{valor}}"
+  },
+  "dado": {
+    "sinTirar": "Dado: sin tirar",
+    "valor": "Dado: {{valor}}",
+    "guardado": "Dado: {{valor}}, guardado"
+  },
+  "inicio": {
+    "titulo": "Nueva partida",
+    "jugadores": "Jugadores",
+    "recuento": {
+      "vacio": "Apunta entre {{min}} y {{max}} jugadores para empezar.",
+      "faltan_one": "Falta al menos {{count}} jugador más.",
+      "faltan_other": "Faltan al menos {{count}} jugadores más.",
+      "caben_one": "¡Listos para jugar! Aún cabe {{count}} más.",
+      "caben_other": "¡Listos para jugar! Aún caben {{count}} más.",
+      "completa": "Mesa completa: {{total}} jugadores."
+    },
+    "confirmar": {
+      "pregunta": "¿Empezar una partida nueva?",
+      "detalle": "La partida a medias se abandonará y ya no se podrá continuar.",
+      "detalleRonda": "La partida a medias (ronda {{ronda}}) se abandonará y ya no se podrá continuar.",
+      "cancelar": "Cancelar",
+      "aceptar": "Sí, empezar otra"
+    },
+    "empezar": "Empezar partida"
+  },
+  "formularioJugador": {
+    "etiqueta": "Nombre del jugador",
+    "ejemplo": "Ej.: Ana",
+    "anadir": "Añadir",
+    "errores": {
+      "vacio": "Escribe un nombre.",
+      "largo": "El nombre no puede tener más de {{max}} caracteres.",
+      "mesaCompleta": "Como máximo pueden jugar {{max}} personas.",
+      "repetido": "Ya hay alguien que se llama {{nombre}}."
+    }
+  },
+  "listaJugadores": {
+    "titulo": "Jugadores apuntados",
+    "quitar": "Quitar a {{nombre}}"
+  },
+  "partidaEnCurso": {
+    "titulo": "Hay una partida a medias",
+    "detalle": "Ronda {{ronda}} · {{jugadores}}",
+    "continuar": "Continuar partida"
+  },
+  "reglas": {
+    "titulo": "Cómo se juega",
+    "jugadores": "De 2 a 8 jugadores, con un solo móvil que se va pasando. Cada jugador empieza con 3 vidas.",
+    "turno": "En tu turno tiras 5 dados. Entre tirada y tirada toca los dados que quieras para guardarlos (o soltarlos): los guardados no se vuelven a tirar.",
+    "abrir": "Quien abre la ronda puede tirar hasta 3 veces. Las tiradas que use son el máximo para el resto de jugadores en esa ronda.",
+    "plantarse": "Cuando te plantas, tu jugada son los 5 dados.",
+    "jugadasTitulo": "Jugadas, de mejor a peor",
+    "jugadas": {
+      "escalera": { "nombre": "Escalera", "detalle": "2-3-4-5-6" },
+      "repoker": { "nombre": "Repóker", "detalle": "cinco iguales" },
+      "poker": { "nombre": "Póker", "detalle": "cuatro iguales" },
+      "trio": { "nombre": "Trío", "detalle": "tres iguales" },
+      "pareja": { "nombre": "Pareja", "detalle": "dos iguales" }
+    },
+    "desempate": "Con la misma jugada gana el valor más alto: un trío de 5 supera a un trío de 3.",
+    "comodines": "Los <0>unos son comodines</0>: se suman a tu grupo más numeroso (si hay empate, al de mayor valor). No sirven para la escalera.",
+    "ejemplo": "Por ejemplo, 1-4-4-2-6",
+    "ejemploResultado": "= trío de 4",
+    "perder": "La peor jugada de la ronda pierde una vida. Si hay empate, pierde quien jugó después. Quien pierde la vida abre la siguiente ronda.",
+    "fin": "La partida acaba cuando alguien se queda sin vidas: esa persona es la perdedora."
+  },
+  "partida": {
+    "cargando": "Cargando partida…",
+    "estadoInesperado": "La partida está en un estado inesperado",
+    "pruebaDeNuevo": "Prueba a cargarla de nuevo.",
+    "rondaTerminada": "Ronda terminada",
+    "turnoDeTotal": "Turno {{turno}} de {{total}}"
+  },
+  "pasarMovil": {
+    "aviso": "Turno de",
+    "abresRonda_one": "Abres la ronda: puedes tirar hasta {{count}} vez.",
+    "abresRonda_other": "Abres la ronda: puedes tirar hasta {{count}} veces.",
+    "tiradas_one": "Tienes {{count}} tirada.",
+    "tiradas_other": "Tienes {{count}} tiradas.",
+    "aSuperar": "A superar: <0>{{jugada}}</0> de {{nombre}}",
+    "empezar": "Toca para empezar",
+    "nota": "Que no mire nadie más"
+  },
+  "peorTirada": {
+    "titulo": "Tirada a superar",
+    "nota": "Si empatas, pierdes tú.",
+    "vacia": "Nadie ha jugado todavía en esta ronda."
+  },
+  "turno": {
+    "prefijo": "Turno de ",
+    "tirada": "Tirada <0>{{tirada}}</0>/<1>{{tiradaMax}}</1>",
+    "dados": "Tus dados",
+    "sinJugada": "Aquí verás tu jugada",
+    "tirar": "Tirar dados",
+    "volverATirar": "Volver a tirar",
+    "enviando": "Enviando…",
+    "plantarse": "Plantarse",
+    "ayuda": {
+      "rodando": "Tirando…",
+      "empezar": "Tira los dados para empezar.",
+      "sinTiradas": "No te quedan tiradas: plántate.",
+      "todosGuardados": "Has guardado todos los dados: suelta alguno para volver a tirar, o plántate.",
+      "guardar": "Toca un dado para guardarlo o soltarlo. Los guardados no se vuelven a tirar."
+    }
+  },
+  "jugadaActual": {
+    "etiqueta": "Llevas: ",
+    "supera": "Superas la peor tirada",
+    "peor": "Ahora mismo serías la peor tirada"
+  },
+  "marcador": {
+    "titulo": "Marcador",
+    "jugando": "Jugando",
+    "porJugar": "Por jugar",
+    "vaPerdiendo": " (va perdiendo)"
+  },
+  "resumenRonda": {
+    "titulo": "Fin de la ronda {{ronda}}",
+    "pierde": "<0>{{nombre}}</0> pierde una vida",
+    "quedan_one": "le queda {{count}} vida",
+    "quedan_other": "le quedan {{count}} vidas",
+    "sinVidas": "se queda sin vidas",
+    "con": "Con <0>{{jugada}}</0>",
+    "siguiente": "{{nombre}} abre la ronda {{ronda}}.",
+    "verResultado": "Ver resultado final",
+    "siguienteRonda": "Siguiente ronda"
+  },
+  "final": {
+    "cargando": "Cargando resultado…",
+    "titulo": "Fin de la partida",
+    "pierde": "<0>{{nombre}}</0> pierde la partida",
+    "castigo": "Castigo",
+    "castigos": [
+      "Te toca recoger la mesa.",
+      "Invitas a la próxima ronda (de lo que sea).",
+      "Los demás eligen la música durante la próxima hora.",
+      "Cuenta un chiste malo. Los demás deciden si vale.",
+      "Hoy friegas tú.",
+      "Imita a una gallina durante diez segundos.",
+      "Eliges la próxima peli… de la lista que te hagan los demás.",
+      "Sirves las bebidas hasta la revancha."
+    ],
+    "revancha": "Revancha",
+    "ultimaRonda": "Última ronda ({{ronda}})",
+    "clasificacion": "Clasificación",
+    "puesto_ordinal_other": "{{count}}º",
+    "pierdeEtiqueta": "Pierde"
+  },
+  "errores": {
+    "tituloCarga": "No se ha podido cargar la partida",
+    "respuestaInesperada": "El servidor ha respondido algo inesperado. ¿Está en marcha la API?",
+    "sinConexion": "No se puede conectar con el servidor. Comprueba la conexión e inténtalo de nuevo.",
+    "inesperado": "Ha ocurrido un error inesperado. Inténtalo de nuevo.",
+    "noExiste": "Esa partida no existe.",
+    "servidorCaido": "El servidor no está disponible ahora mismo. Inténtalo de nuevo en un momento.",
+    "rechazada": "El servidor ha rechazado la petición.",
+    "idPartidaNoValido": "Identificador de partida no válido.",
+    "numeroJugadores": "Debe haber entre 2 y 8 jugadores.",
+    "longitudNombre": "Cada nombre debe tener entre 1 y 20 caracteres.",
+    "nombresRepetidos": "Los nombres de los jugadores no se pueden repetir.",
+    "idJugadorNoValido": "Identificador de jugador no válido.",
+    "rondaNoValida": "Número de ronda no válido.",
+    "dadosNoValidos": "Los dados deben ser 5 números enteros del 1 al 6.",
+    "tiradasNoValidas": "El número de tiradas no es válido.",
+    "partidaNoExiste": "La partida no existe.",
+    "partidaTerminada": "La partida ya ha terminado.",
+    "rondaTerminada": "La ronda ya ha terminado.",
+    "noEsSuTurno": "No es el turno de este jugador.",
+    "demasiadasTiradas": "Has tirado más veces de las que se pueden en esta ronda.",
+    "sinBaseDeDatos": "No hay conexión con la base de datos.",
+    "rutaNoEncontrada": "Ruta no encontrada.",
+    "jsonNoValido": "El cuerpo de la petición no es un JSON válido.",
+    "peticionNoValida": "Petición no válida.",
+    "errorInterno": "Error interno del servidor."
+  }
+}

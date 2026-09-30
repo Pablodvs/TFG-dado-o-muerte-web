@@ -1,0 +1,204 @@
+{
+  "comun": {
+    "cargando": "Loading…",
+    "creandoPartida": "Creating game…",
+    "menuPrincipal": "Main menu",
+    "reintentar": "Try again",
+    "ronda": "Round {{ronda}}",
+    "puntos_one": "{{count}} point",
+    "puntos_other": "{{count}} points",
+    "vidas_one": "{{count}} life",
+    "vidas_other": "{{count}} lives"
+  },
+  "cabecera": {
+    "lema": "Five dice, three lives and only one loser."
+  },
+  "idioma": {
+    "etiqueta": "Language"
+  },
+  "jugadas": {
+    "escalera": "Straight",
+    "pareja": "Pair of {{valor}}s",
+    "trio": "Three {{valor}}s",
+    "poker": "Four {{valor}}s",
+    "repoker": "Five {{valor}}s"
+  },
+  "dado": {
+    "sinTirar": "Die: not rolled",
+    "valor": "Die: {{valor}}",
+    "guardado": "Die: {{valor}}, held"
+  },
+  "inicio": {
+    "titulo": "New game",
+    "jugadores": "Players",
+    "recuento": {
+      "vacio": "Add between {{min}} and {{max}} players to start.",
+      "faltan_one": "You need at least {{count}} more player.",
+      "faltan_other": "You need at least {{count}} more players.",
+      "caben_one": "Ready to play! There's room for {{count}} more.",
+      "caben_other": "Ready to play! There's room for {{count}} more.",
+      "completa": "Table full: {{total}} players."
+    },
+    "confirmar": {
+      "pregunta": "Start a new game?",
+      "detalle": "The unfinished game will be abandoned and can't be continued.",
+      "detalleRonda": "The unfinished game (round {{ronda}}) will be abandoned and can't be continued.",
+      "cancelar": "Cancel",
+      "aceptar": "Yes, start another"
+    },
+    "empezar": "Start game"
+  },
+  "formularioJugador": {
+    "etiqueta": "Player name",
+    "ejemplo": "e.g. Sam",
+    "anadir": "Add",
+    "errores": {
+      "vacio": "Type a name.",
+      "largo": "Names can't be longer than {{max}} characters.",
+      "mesaCompleta": "At most {{max}} people can play.",
+      "repetido": "There's already someone called {{nombre}}."
+    }
+  },
+  "listaJugadores": {
+    "titulo": "Players signed up",
+    "quitar": "Remove {{nombre}}"
+  },
+  "partidaEnCurso": {
+    "titulo": "There's an unfinished game",
+    "detalle": "Round {{ronda}} · {{jugadores}}",
+    "continuar": "Continue game"
+  },
+  "reglas": {
+    "titulo": "How to play",
+    "jugadores": "2 to 8 players, sharing a single phone that gets passed around. Everyone starts with 3 lives.",
+    "turno": "On your turn you roll 5 dice. Between rolls, tap any dice you want to hold (or release): held dice aren't rolled again.",
+    "abrir": "Whoever opens the round can roll up to 3 times. The number of rolls they use is the limit for everyone else that round.",
+    "plantarse": "When you stand, your hand is all 5 dice.",
+    "jugadasTitulo": "Hands, best to worst",
+    "jugadas": {
+      "escalera": { "nombre": "Straight", "detalle": "2-3-4-5-6" },
+      "repoker": { "nombre": "Five of a kind", "detalle": "five alike" },
+      "poker": { "nombre": "Four of a kind", "detalle": "four alike" },
+      "trio": { "nombre": "Three of a kind", "detalle": "three alike" },
+      "pareja": { "nombre": "Pair", "detalle": "two alike" }
+    },
+    "desempate": "With the same hand, the higher value wins: three 5s beat three 3s.",
+    "comodines": "<0>1s are wild</0>: they join your largest group (on a tie, the higher one). They don't count towards a straight.",
+    "ejemplo": "For example, 1-4-4-2-6",
+    "ejemploResultado": "= three 4s",
+    "perder": "The worst hand of the round loses a life. On a tie, whoever played later loses. The player who loses the life opens the next round.",
+    "fin": "The game ends when someone runs out of lives: that player is the loser."
+  },
+  "partida": {
+    "cargando": "Loading game…",
+    "estadoInesperado": "The game is in an unexpected state",
+    "pruebaDeNuevo": "Try loading it again.",
+    "rondaTerminada": "Round over",
+    "turnoDeTotal": "Turn {{turno}} of {{total}}"
+  },
+  "pasarMovil": {
+    "aviso": "Up next",
+    "abresRonda_one": "You open the round: you can roll up to {{count}} time.",
+    "abresRonda_other": "You open the round: you can roll up to {{count}} times.",
+    "tiradas_one": "You have {{count}} roll.",
+    "tiradas_other": "You have {{count}} rolls.",
+    "aSuperar": "To beat: <0>{{jugada}}</0> by {{nombre}}",
+    "empezar": "Tap to start",
+    "nota": "No peeking, everyone else"
+  },
+  "peorTirada": {
+    "titulo": "Hand to beat",
+    "nota": "If you tie, you lose.",
+    "vacia": "Nobody has played yet this round."
+  },
+  "turno": {
+    "prefijo": "Now playing ",
+    "tirada": "Roll <0>{{tirada}}</0>/<1>{{tiradaMax}}</1>",
+    "dados": "Your dice",
+    "sinJugada": "Your hand will show up here",
+    "tirar": "Roll dice",
+    "volverATirar": "Roll again",
+    "enviando": "Sending…",
+    "plantarse": "Stand",
+    "ayuda": {
+      "rodando": "Rolling…",
+      "empezar": "Roll the dice to start.",
+      "sinTiradas": "No rolls left: time to stand.",
+      "todosGuardados": "You're holding every die: release one to roll again, or stand.",
+      "guardar": "Tap a die to hold or release it. Held dice aren't rolled again."
+    }
+  },
+  "jugadaActual": {
+    "etiqueta": "You have: ",
+    "supera": "You beat the worst hand",
+    "peor": "Right now you'd be the worst hand"
+  },
+  "marcador": {
+    "titulo": "Scoreboard",
+    "jugando": "Playing",
+    "porJugar": "Yet to play",
+    "vaPerdiendo": " (losing)"
+  },
+  "resumenRonda": {
+    "titulo": "End of round {{ronda}}",
+    "pierde": "<0>{{nombre}}</0> loses a life",
+    "quedan_one": "{{count}} life left",
+    "quedan_other": "{{count}} lives left",
+    "sinVidas": "out of lives",
+    "con": "With <0>{{jugada}}</0>",
+    "siguiente": "{{nombre}} opens round {{ronda}}.",
+    "verResultado": "See final result",
+    "siguienteRonda": "Next round"
+  },
+  "final": {
+    "cargando": "Loading result…",
+    "titulo": "Game over",
+    "pierde": "<0>{{nombre}}</0> loses the game",
+    "castigo": "Penalty",
+    "castigos": [
+      "You're clearing the table.",
+      "The next round is on you (of whatever).",
+      "Everyone else picks the music for the next hour.",
+      "Tell a bad joke. The others decide if it counts.",
+      "You're doing the dishes today.",
+      "Do a chicken impression for ten seconds.",
+      "You pick the next movie… from a list the others make for you.",
+      "You're serving drinks until the rematch."
+    ],
+    "revancha": "Rematch",
+    "ultimaRonda": "Last round ({{ronda}})",
+    "clasificacion": "Standings",
+    "puesto_ordinal_one": "{{count}}st",
+    "puesto_ordinal_two": "{{count}}nd",
+    "puesto_ordinal_few": "{{count}}rd",
+    "puesto_ordinal_other": "{{count}}th",
+    "pierdeEtiqueta": "Loser"
+  },
+  "errores": {
+    "tituloCarga": "Couldn't load the game",
+    "respuestaInesperada": "The server sent an unexpected response. Is the API running?",
+    "sinConexion": "Can't connect to the server. Check your connection and try again.",
+    "inesperado": "Something unexpected went wrong. Please try again.",
+    "noExiste": "That game doesn't exist.",
+    "servidorCaido": "The server isn't available right now. Try again in a moment.",
+    "rechazada": "The server rejected the request.",
+    "idPartidaNoValido": "Invalid game ID.",
+    "numeroJugadores": "There must be between 2 and 8 players.",
+    "longitudNombre": "Each name must be between 1 and 20 characters long.",
+    "nombresRepetidos": "Player names can't be repeated.",
+    "idJugadorNoValido": "Invalid player ID.",
+    "rondaNoValida": "Invalid round number.",
+    "dadosNoValidos": "The dice must be 5 whole numbers from 1 to 6.",
+    "tiradasNoValidas": "The number of rolls isn't valid.",
+    "partidaNoExiste": "The game doesn't exist.",
+    "partidaTerminada": "The game is already over.",
+    "rondaTerminada": "The round is already over.",
+    "noEsSuTurno": "It's not this player's turn.",
+    "demasiadasTiradas": "You rolled more times than this round allows.",
+    "sinBaseDeDatos": "There's no connection to the database.",
+    "rutaNoEncontrada": "Route not found.",
+    "jsonNoValido": "The request body isn't valid JSON.",
+    "peticionNoValida": "Invalid request.",
+    "errorInterno": "Internal server error."
+  }
+}
