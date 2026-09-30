@@ -122,6 +122,24 @@ Troubleshooting:
 - Both devices must be on the same network.
 - The app ships a web manifest (standalone, portrait), so you can install it like an app: iOS Safari: Share, then Add to Home Screen; Android Chrome: menu, then Install app / Add to Home screen.
 
+## Deploying with Docker / Coolify
+
+The `Dockerfile` at the root builds the client and runs the server, which serves both the API and the app on port 3001. On startup it creates the tables if they are missing (it is safe to run again), waiting up to a minute for MySQL to be ready.
+
+```bash
+docker build -t dado-o-muerte .
+docker run -p 3001:3001 -e DB_HOST=<mysql-host> -e DB_USER=<user> -e DB_PASSWORD=<password> -e DB_NAME=<database> dado-o-muerte
+```
+
+**Coolify** behind a Cloudflare Tunnel:
+
+1. Create a **MySQL 8** resource (it does not need public access) and note its internal host, user, password and database.
+2. Create an application from this repository with the **Dockerfile** build pack and **Ports Exposes** set to `3001`.
+3. Add the variables `DB_HOST` (the database's internal host), `DB_PORT` (`3306`), `DB_USER`, `DB_PASSWORD` and `DB_NAME`.
+4. Set the domain, for example `https://dado.example.com`. The image already has a health check on `/api/health`.
+5. In Cloudflare, add a public hostname for that domain to the tunnel with service `http://localhost:80` (Coolify's proxy). If `cloudflared` runs in a container, `localhost` is the container itself: connect it to the `coolify` network and use `http://coolify-proxy:80`.
+6. Turn off the HTTP → HTTPS redirect for the application in Coolify. Cloudflare already serves HTTPS and the tunnel talks plain HTTP to Coolify, so leaving it on causes `TOO_MANY_REDIRECTS`.
+
 ## Environment variables
 
 Set in `servidor/.env` (see `servidor/.env.example`). Real environment variables take priority over the file.
@@ -147,6 +165,7 @@ cd cliente && npm test     # Jest + React Testing Library (watch mode)
 ## Project structure
 
 ```
+Dockerfile           production image (builds the client and runs the server)
 servidor/
   index.js           entry point (prints LAN URLs)
   app.js             Express app, routes, serves cliente/build
@@ -155,7 +174,7 @@ servidor/
   config.js, db.js   configuration and MySQL pool
   errores.js         HTTP error helpers
   db/                schema.sql, migracion-v1.sql, init.js
-  test/              api and scoring tests
+  test/              api, scoring and db:init tests
 cliente/
   src/
     pantallas/       screens: start, game, final

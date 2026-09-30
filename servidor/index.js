@@ -26,6 +26,17 @@ servidor.on('error', (err) => {
   process.exit(1)
 })
 
+// docker stop (y Coolify al redesplegar) manda SIGTERM: se deja de aceptar conexiones,
+// se cierra el pool y se sale, en vez de esperar a que Docker mate el proceso
+function parar(senal) {
+  console.log(`Recibido ${senal}, cerrando…`)
+  servidor.close(() => pool.end().finally(() => process.exit(0)))
+  servidor.closeIdleConnections() // Node 18 no cierra solo las conexiones keep-alive
+  setTimeout(() => process.exit(1), 5000).unref()
+}
+process.once('SIGTERM', parar)
+process.once('SIGINT', parar)
+
 const { host, port, database } = config.db
 pool.query('SELECT 1 FROM partida LIMIT 1').catch((err) => {
   console.warn(`Aviso: no se puede usar la base de datos "${database}" en ${host}:${port} (${err.message}).`)
