@@ -231,7 +231,7 @@ router.get('/health', async (req, res) => {
     await pool.query('SELECT 1')
   } catch (err) {
     console.error('Health check:', err.message)
-    throw new ErrorHttp(500, 'No hay conexión con la base de datos', 'sinBaseDeDatos')
+    throw new ErrorHttp(503, 'No hay conexión con la base de datos', 'sinBaseDeDatos')
   }
   res.json({ ok: true })
 })
