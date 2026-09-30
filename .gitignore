@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Configuración local
+.env
+.env.*
+!.env.example
+
+# Builds y artefactos
+build/
+coverage/
+test-results/
+playwright-report/
+
+# Varios
+.DS_Store
+npm-debug.log*
