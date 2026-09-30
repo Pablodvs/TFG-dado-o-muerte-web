@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-// Mismo origen por defecto: en desarrollo el "proxy" de package.json reenvía
-// /api al servidor (puerto 3001). Para otro host, definir REACT_APP_API_URL.
+// Mismo origen por defecto: en desarrollo el proxy de vite.config.js reenvía
+// /api al servidor (puerto 3001). Para otro host, definir VITE_API_URL.
 const cliente = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || '',
+    baseURL: import.meta.env.VITE_API_URL || '',
     timeout: 10000,
 });
 

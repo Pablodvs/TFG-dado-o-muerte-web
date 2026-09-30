@@ -13,22 +13,22 @@ import {
     renderApp,
 } from '../test-utils';
 
-jest.mock('../api', () => ({
-    ...jest.requireActual('../api'),
-    crearPartida: jest.fn(),
-    obtenerPartida: jest.fn(),
-    plantarse: jest.fn(),
+vi.mock('../api', async (importOriginal) => ({
+    ...(await importOriginal()),
+    crearPartida: vi.fn(),
+    obtenerPartida: vi.fn(),
+    plantarse: vi.fn(),
 }));
 
 beforeEach(() => {
     localStorage.clear();
     localStorage.setItem('dadoOMuerte:partidaId', '12');
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 });
 
 afterEach(() => {
-    jest.useRealTimers();
-    jest.restoreAllMocks();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
 });
 
 const trasAna = estadoPartida({
@@ -62,14 +62,14 @@ function tirar(...valores) {
     prepararDados(...valores);
     fireEvent.click(screen.getByRole('button', { name: /^(Tirar dados|Volver a tirar)$/ }));
     act(() => {
-        jest.advanceTimersByTime(DURACION_TIRADA);
+        vi.advanceTimersByTime(DURACION_TIRADA);
     });
 }
 
 // Las pantallas recién aparecidas no responden durante ESPERA_ARMADO (doble toque)
 function esperarArmado() {
     act(() => {
-        jest.advanceTimersByTime(ESPERA_ARMADO);
+        vi.advanceTimersByTime(ESPERA_ARMADO);
     });
 }
 
@@ -148,7 +148,7 @@ test('un doble toque en Plantarse no se salta la pantalla de pasar el móvil', a
     expect(aviso).toHaveAttribute('aria-disabled', 'true');
     fireEvent.click(aviso);
     act(() => {
-        jest.advanceTimersByTime(ESPERA_ARMADO / 2);
+        vi.advanceTimersByTime(ESPERA_ARMADO / 2);
     });
     fireEvent.click(aviso);
     expect(screen.queryByRole('list', { name: 'Tus dados' })).not.toBeInTheDocument();

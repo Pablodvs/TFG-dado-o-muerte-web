@@ -3,11 +3,11 @@ import * as api from '../api';
 import { leerPartidaId } from '../lib/almacen';
 import { errorHttp, estadoPartida, nombresDe, renderApp } from '../test-utils';
 
-jest.mock('../api', () => ({
-    ...jest.requireActual('../api'),
-    crearPartida: jest.fn(),
-    obtenerPartida: jest.fn(),
-    plantarse: jest.fn(),
+vi.mock('../api', async (importOriginal) => ({
+    ...(await importOriginal()),
+    crearPartida: vi.fn(),
+    obtenerPartida: vi.fn(),
+    plantarse: vi.fn(),
 }));
 
 beforeEach(() => localStorage.clear());

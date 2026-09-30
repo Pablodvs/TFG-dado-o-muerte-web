@@ -60,34 +60,32 @@ describe('idioma inicial', () => {
     let idiomas;
 
     beforeEach(() => {
-        idiomas = jest.spyOn(navigator, 'languages', 'get');
+        idiomas = vi.spyOn(navigator, 'languages', 'get');
     });
 
     afterEach(() => idiomas.mockRestore());
 
     // Carga i18n de cero, como al abrir la página
-    function idiomaAlCargar() {
-        let idioma;
-        jest.isolateModules(() => {
-            idioma = require('./i18n').default.language;
-        });
-        return idioma;
+    async function idiomaAlCargar() {
+        vi.resetModules();
+        const { default: i18nNuevo } = await import('./i18n');
+        return i18nNuevo.language;
     }
 
-    test('sin elegir ninguno, inglés aunque el navegador pida castellano', () => {
+    test('sin elegir ninguno, inglés aunque el navegador pida castellano', async () => {
         idiomas.mockReturnValue(['es-ES', 'es']);
-        expect(idiomaAlCargar()).toBe('en');
+        expect(await idiomaAlCargar()).toBe('en');
     });
 
-    test('lo elegido a mano se recuerda', () => {
+    test('lo elegido a mano se recuerda', async () => {
         idiomas.mockReturnValue(['en-US']);
         localStorage.setItem('dadoOMuerte:idioma', 'es');
-        expect(idiomaAlCargar()).toBe('es');
+        expect(await idiomaAlCargar()).toBe('es');
     });
 
-    test('un idioma guardado que no tenemos se ignora', () => {
+    test('un idioma guardado que no tenemos se ignora', async () => {
         idiomas.mockReturnValue(['es-ES']);
         localStorage.setItem('dadoOMuerte:idioma', 'fr');
-        expect(idiomaAlCargar()).toBe('en');
+        expect(await idiomaAlCargar()).toBe('en');
     });
 });

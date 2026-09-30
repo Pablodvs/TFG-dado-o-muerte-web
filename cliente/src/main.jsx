@@ -11,7 +11,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <Provider store={store}>
-            <BrowserRouter>
+            {/* Sin Suspense ni carga perezosa, las transiciones solo retrasarían el cambio de pantalla */}
+            <BrowserRouter useTransitions={false}>
                 <App />
             </BrowserRouter>
         </Provider>

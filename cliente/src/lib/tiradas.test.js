@@ -1,9 +1,8 @@
 // El cliente puntúa por su cuenta para enseñar "Llevas: …" y "Tirada a superar" mientras se
 // juega; si se separa del servidor, la pantalla dice una cosa y la ronda acaba de otra.
 // Aquí se comparan las dos implementaciones con las 7776 manos posibles.
+import servidor from '../../../servidor/puntuacion.js';
 import { describirDados, describirJugada, puntuar } from './puntuacion';
-
-const servidor = require('../../../servidor/puntuacion');
 
 function todasLasManos() {
     const manos = [];

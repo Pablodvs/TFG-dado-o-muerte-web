@@ -8,7 +8,7 @@ import { crearStore } from './store';
 export function renderApp(ruta = '/', store = crearStore()) {
     const utils = render(
         <Provider store={store}>
-            <MemoryRouter initialEntries={[ruta]}>
+            <MemoryRouter initialEntries={[ruta]} useTransitions={false}>
                 <App />
             </MemoryRouter>
         </Provider>,
@@ -56,7 +56,7 @@ export function errorDeRed() {
 
 // Las próximas llamadas a Math.random darán estos valores de dado
 export function prepararDados(...valores) {
-    const espia = jest.spyOn(Math, 'random');
+    const espia = vi.spyOn(Math, 'random');
     valores.forEach(v => espia.mockReturnValueOnce((v - 1) / 6 + 0.01));
     return espia;
 }

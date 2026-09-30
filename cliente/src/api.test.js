@@ -3,9 +3,9 @@ import { crearPartida, describirError, obtenerPartida, plantarse, textoError } f
 import i18n from './i18n';
 import { errorDeRed, errorHttp, estadoPartida } from './test-utils';
 
-jest.mock('axios', () => {
-    const instancia = { get: jest.fn(), post: jest.fn() };
-    return { create: jest.fn(() => instancia), instancia };
+vi.mock('axios', () => {
+    const instancia = { get: vi.fn(), post: vi.fn() };
+    return { default: { create: vi.fn(() => instancia), instancia } };
 });
 
 const { instancia } = axios;

@@ -13,11 +13,11 @@ import {
     tiradaMaxDe,
 } from './partida';
 
-jest.mock('../api', () => ({
-    ...jest.requireActual('../api'),
-    crearPartida: jest.fn(),
-    obtenerPartida: jest.fn(),
-    plantarse: jest.fn(),
+vi.mock('../api', async (importOriginal) => ({
+    ...(await importOriginal()),
+    crearPartida: vi.fn(),
+    obtenerPartida: vi.fn(),
+    plantarse: vi.fn(),
 }));
 
 beforeEach(() => localStorage.clear());
