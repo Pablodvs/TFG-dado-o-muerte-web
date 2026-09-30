@@ -1,6 +1,6 @@
 # Dice or Die
 
-[![CI](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml/badge.svg)](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml)
+[![CI](https://github.com/Pablodvs/dice-or-die/actions/workflows/ci.yml/badge.svg)](https://github.com/Pablodvs/dice-or-die/actions/workflows/ci.yml)
 [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
 
 Un juego de dados para 2 a 8 jugadores que se juega pasándose un único móvil: tira cinco dados, guarda los buenos y procura no acabar la ronda con la peor jugada.

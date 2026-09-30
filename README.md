@@ -1,6 +1,6 @@
 # Dice or Die
 
-[![CI](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml/badge.svg)](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml)
+[![CI](https://github.com/Pablodvs/dice-or-die/actions/workflows/ci.yml/badge.svg)](https://github.com/Pablodvs/dice-or-die/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A pass-and-play dice game for 2 to 8 players: everyone shares one phone, rolls five dice, holds the good ones and tries not to end the round with the worst hand.
