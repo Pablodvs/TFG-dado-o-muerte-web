@@ -74,19 +74,20 @@ describe('idioma inicial', () => {
         return idioma;
     }
 
-    test('usa el primer idioma del navegador que haya, sin variante regional', () => {
-        idiomas.mockReturnValue(['fr-FR', 'en-GB', 'es-ES']);
+    test('sin elegir ninguno, inglés aunque el navegador pida castellano', () => {
+        idiomas.mockReturnValue(['es-ES', 'es']);
         expect(idiomaAlCargar()).toBe('en');
     });
 
-    test('si el navegador no pide ninguno conocido, castellano', () => {
-        idiomas.mockReturnValue(['fr-FR', 'de']);
+    test('lo elegido a mano se recuerda', () => {
+        idiomas.mockReturnValue(['en-US']);
+        localStorage.setItem('dadoOMuerte:idioma', 'es');
         expect(idiomaAlCargar()).toBe('es');
     });
 
-    test('lo elegido a mano manda sobre el navegador', () => {
+    test('un idioma guardado que no tenemos se ignora', () => {
         idiomas.mockReturnValue(['es-ES']);
-        localStorage.setItem('dadoOMuerte:idioma', 'en');
+        localStorage.setItem('dadoOMuerte:idioma', 'fr');
         expect(idiomaAlCargar()).toBe('en');
     });
 });

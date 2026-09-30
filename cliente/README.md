@@ -1,6 +1,6 @@
-# Dado o muerte: cliente
+# Dice or Die: cliente
 
-Cliente web (React 18 + Redux Toolkit, Create React App) de "Dado o muerte". La explicación del juego, la instalación y la configuración están en el [README principal](../README.md) ([en español](../README_ES.md)).
+Cliente web (React 18 + Redux Toolkit, Create React App) de "Dice or Die". La explicación del juego, la instalación y la configuración están en el [README principal](../README.md) ([en español](../README_ES.md)).
 
 ```bash
 npm install

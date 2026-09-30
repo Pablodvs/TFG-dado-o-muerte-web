@@ -1,5 +1,6 @@
-// Traducciones con i18next. Los textos están en src/idiomas/<idioma>.json; el
-// castellano es el idioma original y el de reserva si falta alguna clave.
+// Traducciones con i18next. Los textos están en src/idiomas/<idioma>.json. El
+// castellano es el idioma en que se escribieron; la app sale en inglés salvo que
+// se elija otro, y el inglés es también el de reserva si falta alguna clave.
 //
 // Frases con formato (<Trans>): las etiquetas <0>, <1>... son los hijos del
 // <Trans> por orden, y los valores se pasan como objetos hijos ({{ nombre }}).
@@ -17,18 +18,12 @@ export const IDIOMAS = [
     { codigo: 'en', nombre: 'English' },
 ];
 
-const IDIOMA_ORIGINAL = 'es';
+const IDIOMA_POR_DEFECTO = 'en';
 
-// 'en-GB' → 'en'; null si no lo tenemos
-function soportado(codigo) {
-    const base = typeof codigo === 'string' ? codigo.toLowerCase().split('-')[0] : null;
-    return IDIOMAS.some(i => i.codigo === base) ? base : null;
-}
-
-// El elegido a mano; si no, el primero del navegador que tengamos; si no, el original
+// El elegido a mano si es uno que tenemos; si no, el inglés (no se mira el del navegador)
 function idiomaInicial() {
-    const preferidos = navigator.languages?.length ? navigator.languages : [navigator.language];
-    return [leerIdioma(), ...preferidos].map(soportado).find(Boolean) ?? IDIOMA_ORIGINAL;
+    const guardado = leerIdioma();
+    return IDIOMAS.some(i => i.codigo === guardado) ? guardado : IDIOMA_POR_DEFECTO;
 }
 
 // Para lectores de pantalla, traductores automáticos y guiones (hyphens: auto)
@@ -42,7 +37,7 @@ i18n.use(initReactI18next).init({
         en: { translation: en },
     },
     lng: idiomaInicial(),
-    fallbackLng: IDIOMA_ORIGINAL,
+    fallbackLng: IDIOMA_POR_DEFECTO,
     supportedLngs: IDIOMAS.map(i => i.codigo),
     // Los recursos ya están cargados: así el primer render sale traducido
     initImmediate: false,

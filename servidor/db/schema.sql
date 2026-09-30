@@ -1,4 +1,4 @@
--- Esquema de Dado o muerte (MySQL 8 / MariaDB). Se puede ejecutar varias veces.
+-- Esquema de Dice or Die (MySQL 8 / MariaDB). Se puede ejecutar varias veces.
 -- Con "npm run db:init" el nombre de la base de datos se toma de DB_NAME.
 -- Si ya tienes la base de datos de la versión 1, aplica también migracion-v1.sql.
 

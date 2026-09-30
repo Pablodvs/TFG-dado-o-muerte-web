@@ -1,4 +1,4 @@
-# Dado o muerte
+# Dice or Die
 
 Un juego de dados para 2 a 8 jugadores que se juega pasándose un único móvil: tira, guarda dados, tira de farol y procura no quedarte con la peor jugada.
 
@@ -13,7 +13,7 @@ English version: [README.md](README.md)
 - Resumen de ronda que indica quién pierde una vida y por qué.
 - La partida sobrevive a recargar la página (el estado se guarda en el servidor y en el navegador).
 - Revancha con los mismos jugadores.
-- En castellano e inglés: se elige según el idioma del navegador y se puede cambiar en cualquier momento desde la cabecera.
+- En inglés y castellano: sale en inglés y se puede cambiar en cualquier momento desde la cabecera (la elección se recuerda).
 
 ## Cómo se juega
 

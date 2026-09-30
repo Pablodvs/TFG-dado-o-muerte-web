@@ -1,8 +1,8 @@
 {
-  "short_name": "Dado o muerte",
-  "name": "Dado o muerte",
-  "description": "Juego de dados para jugar en grupo con un solo móvil.",
-  "lang": "es",
+  "short_name": "Dice or Die",
+  "name": "Dice or Die",
+  "description": "A dice game for a group sharing a single phone.",
+  "lang": "en",
   "icons": [
     {
       "src": "favicon.svg",

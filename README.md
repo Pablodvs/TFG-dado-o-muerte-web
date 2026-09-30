@@ -1,4 +1,4 @@
-# Dado o muerte (Dice or Die)
+# Dice or Die
 
 A pass-and-play dice game for 2 to 8 players: roll, hold, bluff your way to a good hand, and avoid having the worst one. Everyone shares a single phone (or screen) and passes it around.
 
@@ -13,7 +13,7 @@ Versión en español: [README_ES.md](README_ES.md)
 - Round summary showing who lost a life and why.
 - The game survives page reloads (state is kept on the server and in the browser).
 - Rematch with the same players.
-- Spanish and English: picked from the browser language, and switchable at any time from the header.
+- English and Spanish: it opens in English, and you can switch at any time from the header (your choice is remembered).
 
 ## How to play
 

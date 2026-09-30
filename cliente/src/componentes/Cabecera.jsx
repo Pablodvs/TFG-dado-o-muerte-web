@@ -14,7 +14,7 @@ export default function Cabecera() {
             <Link to="/" className="cabecera__marca">
                 <Logo className="cabecera__logo" />
                 <span className="cabecera__nombre">
-                    Dado <span className="cabecera__o">o</span> muerte
+                    Dice <span className="cabecera__o">or</span> Die
                 </span>
             </Link>
             {portada && <p className="cabecera__lema">{t('cabecera.lema')}</p>}

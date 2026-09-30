@@ -1,7 +1,7 @@
 {
   "name": "servidor",
   "version": "2.0.0",
-  "description": "API de Dado o muerte (Express + MySQL)",
+  "description": "API de Dice or Die (Express + MySQL)",
   "main": "index.js",
   "private": true,
   "engines": {
