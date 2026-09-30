@@ -1,33 +1,56 @@
 # Dice or Die
 
-A pass-and-play dice game for 2 to 8 players: roll, hold, bluff your way to a good hand, and avoid having the worst one. Everyone shares a single phone (or screen) and passes it around.
+[![CI](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml/badge.svg)](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Versión en español: [README_ES.md](README_ES.md)
+A pass-and-play dice game for 2 to 8 players: everyone shares one phone, rolls five dice, holds the good ones and tries not to end the round with the worst hand.
+
+**Play it at [dice-or-die.pablodiezdevelasco.com](https://dice-or-die.pablodiezdevelasco.com/)** · Versión en español: [README_ES.md](README_ES.md)
+
+<p align="center">
+  <img src="docs/capturas/en-1-inicio.webp" width="200" alt="Home screen with four players and an unfinished game">
+  <img src="docs/capturas/en-3c-turno-guardados.webp" width="200" alt="A turn with two sixes held and the live preview reading Three 6s">
+  <img src="docs/capturas/en-4-resumen-ronda.webp" width="200" alt="Round summary: Luis loses a life">
+  <img src="docs/capturas/en-5-final.webp" width="200" alt="Game over screen with a penalty for the loser">
+</p>
+
+## About the project
+
+Version 1 (June 2023) was my final degree project (TFG): a React, Express and MySQL web version of the dice game. It is kept under the [`v1`](../../tree/v1) tag. Version 2 (2026) rewrites both sides:
+
+- a REST API that owns the rules, with transactions, validation and translatable error codes;
+- a mobile-first client with its own design, a pass-the-phone flow and English and Spanish;
+- tests on both sides, CI, and a Docker image deployed with Coolify.
+
+The code (identifiers, comments and commits) is in Spanish. A few words help when reading it: *partida* = game, *jugador* = player, *tirada* = roll, *plantarse* = stand, *ronda* = round, *vidas* = lives, *dados* = dice.
 
 ## Features
 
-- "Pass the phone" screen between turns, so nobody sees the next player's dice.
+- A "pass the phone" screen between turns, so nobody sees the next player's dice.
 - Tap a die to hold or release it.
-- Live hand preview while you roll ("Llevas: Trío de 5").
-- The current hand to beat (the worst so far this round) is always visible.
+- Live preview of your hand while you roll ("You have: Three 6s"), and a warning when it would lose.
+- The hand to beat (the worst so far this round) is always visible.
 - Round summary showing who lost a life and why.
-- The game survives page reloads (state is kept on the server and in the browser).
+- The game survives page reloads, including a half-played turn.
 - Rematch with the same players.
 - English and Spanish: it opens in English, and you can switch at any time from the header (your choice is remembered).
+- Installable as an app (web manifest, standalone, portrait).
 
 ## How to play
 
 - Each player starts with **3 lives**. The first player of round 1 is chosen at random.
-- On your turn you roll **5 dice**. After a roll you may **hold** any dice (they will not be rerolled) and roll the rest again. Held dice can be released later. You cannot hold before your first roll.
-- The **first player of each round** may roll up to 3 times and can stand ("Plantarse") at any moment. The number of rolls they used becomes the **roll limit** for everyone else in that round.
+- On your turn you roll **5 dice**. After a roll you may **hold** any dice (they will not be rerolled) and roll the rest again. Held dice can be released later.
+- The **first player of each round** may roll up to 3 times and can stand at any moment. The number of rolls they used becomes the **roll limit** for everyone else in that round.
 - Your final hand is **all 5 dice**, held or not, at the moment you stand.
-- **1s are wildcards**: they count as whatever value helps your group most. The exception is a straight, which cannot use wildcards.
-- Hands are ranked by the size of the group of equal dice (more dice is better) and then by its value (higher is better). A **straight (2-3-4-5-6)** beats everything.
+- **1s are wild**: they count as whatever value helps your largest group. The exception is a straight, which cannot use wildcards.
+- Hands are ranked by the size of the group of equal dice (more is better) and then by its value (higher is better). A **straight (2-3-4-5-6)** beats everything.
 - When everyone has played, the **lowest hand loses a life**. On a tie, **whoever played later loses**.
-- The loser starts the next round, and turns continue in order from them.
-- The game ends when someone reaches 0 lives; that player is the loser.
+- The loser starts the next round. The game ends when someone reaches 0 lives.
 
-### Example 1
+<details>
+<summary>Examples and hand ranking</summary>
+
+**Example 1**
 
 | Player | Roll | Final hand |
 |:--|:--|:--|
@@ -38,7 +61,7 @@ Versión en español: [README_ES.md](README_ES.md)
 
 Players 1 and 3 tie with the lowest hand, so **Player 3 loses** because they played later. The best hand is Player 2's: four dice grouped, with a higher value than Player 4's.
 
-### Example 2
+**Example 2**
 
 | Player | Roll | Final hand |
 |:--|:--|:--|
@@ -49,7 +72,7 @@ Players 1 and 3 tie with the lowest hand, so **Player 3 loses** because they pla
 
 **Player 2 loses**: they only managed a pair. The best hand is Player 4's straight.
 
-### Hand ranking (lowest to highest)
+**Hand ranking (lowest to highest)**
 
 | Pair | Three of a kind | Four of a kind | Five of a kind |
 |:--:|:--:|:--:|:--:|
@@ -59,29 +82,42 @@ Players 1 and 3 tie with the lowest hand, so **Player 3 loses** because they pla
 | 5 5 | 5 5 5 | 5 5 5 5 | 5 5 5 5 5 |
 | 6 6 | 6 6 6 | 6 6 6 6 | 6 6 6 6 6 |
 
-**Highest: Straight (2 3 4 5 6).** In Spanish the app names them Pareja, Trío, Póker, Repóker and Escalera. Internally a group scores `size * 10 + value` (e.g. three 2s = 32) and a straight scores 60.
+**Highest: Straight (2 3 4 5 6).** Internally a group scores `size * 10 + value` (three 2s = 32) and a straight scores 60.
 
-## Stack
+</details>
 
-- **Client** (`cliente/`): React 18 + Redux Toolkit (Create React App), with i18next for translations (`cliente/src/idiomas/`).
-- **Server** (`servidor/`): Express 5 + MySQL (`mysql2`). The server is the authority on scoring and turn order.
+## Tech stack
+
+| | |
+|:--|:--|
+| Client | React 18, Redux Toolkit, React Router, i18next, Vite |
+| Server | Node 22, Express 5, MySQL 8 (`mysql2`), express-rate-limit |
+| Tests | Vitest and Testing Library (client), `node:test` against a real MySQL (server) |
+| Tooling | ESLint, GitHub Actions, Docker (multi-stage), Docker Compose, Coolify |
+
+## Design decisions
+
+- **The server owns the rules.** Scoring, turn order, the per-round roll limit and lives are decided in `servidor/partidas.js`. Each "stand" runs in a MySQL transaction that locks the game (`SELECT … FOR UPDATE`), so two simultaneous requests are processed one after the other.
+- **Double taps are harmless.** Every stand request carries the round number. A repeated request arrives after the round has moved on and gets a 409, which the client resolves by reloading the game instead of showing an error.
+- **Dice are rolled on the device.** The game is played on one shared phone, so the client rolls and the server validates what it receives: five values from 1 to 6, whose turn it is and how many rolls were used. Someone with the browser's dev tools could still send a straight; for online play, rolling would move to the server.
+- **Scoring exists twice, checked by one test.** The client scores your hand as you roll, for the live preview. A test compares the client and server implementations on all 7,776 possible hands.
+- **Reloading doesn't give free rolls.** A half-played turn is saved in `localStorage` under a game, round and player key, so a reload restores the dice and the roll count.
+- **The API is public but not browsable.** Games are addressed by a random 128-bit ID (22 characters of base64url) instead of 1, 2, 3…, and creating games is rate-limited per IP.
+- **Errors are translatable.** Every API error carries a stable `codigo`; the client shows it in the current language and falls back to the server's message for codes it doesn't know.
+- **Accessibility.** Dice are toggle buttons with `aria-pressed` and spoken labels, focus moves to confirmation prompts, the language switcher names each language in that language, and animations respect `prefers-reduced-motion`.
 
 ## Getting started
 
-Prerequisites: Node 18+ and MySQL 8 or MariaDB (for example through XAMPP).
-
-**No MySQL installed?** Start one with Docker first. Wait until it is ready (20-30 seconds on the first start; `docker logs dado-mysql` shows "ready for connections"), otherwise `db:init` fails with "Connection lost":
+Prerequisites: Node 22.12+ and MySQL 8 (or MariaDB). If you don't have MySQL, start one with Docker:
 
 ```bash
 docker run -d --name dado-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3307:3306 mysql:8
 ```
 
-Then, after copying the `.env` file in the next step, set `DB_PORT=3307` in `servidor/.env`.
-
 ```bash
-cp servidor/.env.example servidor/.env      # with Docker: set DB_PORT=3307 in it before db:init
+cp servidor/.env.example servidor/.env      # with the container above, set DB_PORT=3307 in it
 cd servidor && npm install
-npm run db:init                             # creates the database and tables
+npm run db:init -- --esperar                # creates the database and tables (waits for MySQL to start)
 cd ../cliente && npm install
 ```
 
@@ -89,134 +125,77 @@ Then run both sides in two terminals:
 
 ```bash
 cd servidor && npm run dev      # API on http://localhost:3001
-cd cliente && npm start         # app on http://localhost:3000
+cd cliente && npm run dev       # app on http://localhost:3000 (proxies /api to 3001)
 ```
 
-The client dev server proxies `/api` to port 3001 (the `proxy` field in `cliente/package.json`).
-
-**Upgrading from v1?** Run the migration once against your existing database. Existing games and players are kept:
+### Tests and lint
 
 ```bash
-cd servidor && npm run db:init -- db/migracion-v1.sql
+cd servidor && npm test          # node:test; the API tests need the database and are skipped without it
+cd cliente && npm test -- --run  # Vitest (without --run it stays in watch mode)
+cd cliente && npm run lint       # ESLint
 ```
 
-## Playing on your phone
+GitHub Actions runs all of them on every push and pull request, with a MySQL service, and also builds the Docker image.
 
-The whole game runs on one phone that gets passed around. Your computer acts as the host, and the phone must be on the same Wi-Fi.
+### Playing on your phone
 
-**Production style** (recommended):
+Build the client and start the server; it serves `cliente/build` and prints every network address it finds:
 
 ```bash
 cd cliente && npm run build
 cd ../servidor && npm start
 ```
 
-The server serves `cliente/build` automatically and prints every network address it finds, including Docker or VPN ones. Use your Wi-Fi/LAN address (usually `192.168.x.x` or `10.x.x.x`), for example `http://192.168.1.20:3001`, and open it on the phone.
+Open your computer's Wi-Fi address (for example `http://192.168.1.20:3001`) on a phone on the same network. Don't use `localhost` on the phone, and make sure the firewall allows port 3001.
 
-**Development style:** with both dev servers running, open `http://<your-pc-ip>:3000` on the phone.
+## Deployment
 
-Troubleshooting:
+The `Dockerfile` builds the client and runs the server, which serves the API and the app on port 3001. `docker-compose.yaml` adds its own MySQL. On startup the container creates or updates the tables. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) covers Docker, Docker Compose, Coolify, Cloudflare Tunnel, the environment variables and `TRUST_PROXY` for the rate limit behind proxies.
 
-- Do not use `localhost` on the phone: it points to the phone itself. Use your PC's local IP.
-- Your firewall must allow incoming connections on the port (3001, or 3000 in dev).
-- Both devices must be on the same network.
-- The app ships a web manifest (standalone, portrait), so you can install it like an app: iOS Safari: Share, then Add to Home Screen; Android Chrome: menu, then Install app / Add to Home screen.
+## API
 
-## Deploying with Docker / Coolify
+Base path `/api`. Everything is JSON. Errors are `{ "error": "<message in Spanish>", "codigo": "<stable code>" }`, and the client translates them by `codigo`. Every game endpoint returns the full game state (`EstadoPartida`), whose `id` is the game's public ID.
 
-The `Dockerfile` at the root builds the client and runs the server, which serves both the API and the app on port 3001. On startup it creates the tables if they are missing (it is safe to run again), waiting up to a minute for MySQL to be ready. `docker-compose.yaml` runs it together with its own MySQL.
+| Method | Path | Body | Success | Errors |
+|:--|:--|:--|:--|:--|
+| GET | `/api/health` | none | 200 `{ ok: true }` (checks the database) | 503 |
+| POST | `/api/partidas` | `{ jugadores: string[] }` (2-8 unique names, 1-20 characters) | 201 `{ partida }` | 400, 429 |
+| GET | `/api/partidas/:id` | none | 200 `EstadoPartida` | 400, 404 |
+| POST | `/api/partidas/:id/plantarse` | `{ jugadorId, ronda, dados: number[5], tiradas }` | 200 `{ partida, rondaTerminada }` | 400, 404, 409 |
 
-**Docker Compose** (app and MySQL together): put `DB_PASSWORD=<password>` in a `.env` file next to `docker-compose.yaml`. `DB_USER` and `DB_NAME` default to `dado` and `dado-o-muerte`, and the data is kept in the `mysql-datos` volume. The compose file publishes no ports (in Coolify the proxy reaches the app), so to open it locally at `http://localhost:3001` create a `docker-compose.override.yaml` next to it, which Compose picks up automatically:
-
-```yaml
-services:
-  app:
-    ports:
-      - "3001:3001"
-```
-
-```bash
-docker compose up -d --build
-```
-
-**Just the image**, with your own MySQL:
-
-```bash
-docker build -t dado-o-muerte .
-docker run -p 3001:3001 -e DB_HOST=<mysql-host> -e DB_USER=<user> -e DB_PASSWORD=<password> -e DB_NAME=<database> dado-o-muerte
-```
-
-**Coolify**, in one of two ways:
-
-- **Docker Compose build pack** (app and MySQL in one resource): create an application from this repository with the **Docker Compose** build pack, set `DB_PASSWORD` under Environment Variables (it is not needed to build, so it can be a runtime-only variable) and give the `app` service a domain that includes its internal port, for example `https://dado.example.com:3001`. Coolify's scheduled backups are meant for standalone database resources: check whether it offers them for this MySQL, or back up the `mysql-datos` volume yourself.
-- **Dockerfile build pack** with a separate database:
-  1. Create a **MySQL 8** resource (it does not need public access) and note its internal host, user, password and database.
-  2. Create an application from this repository with the **Dockerfile** build pack and **Ports Exposes** set to `3001`.
-  3. Add the variables `DB_HOST` (the database's internal host), `DB_PORT` (`3306`), `DB_USER`, `DB_PASSWORD` and `DB_NAME`.
-  4. Set the domain, for example `https://dado.example.com`. The image already has a health check on `/api/health`.
-
-**Cloudflare Tunnel** (either way):
-
-1. Add a public hostname for that domain to the tunnel with service `http://localhost:80` (Coolify's proxy). If `cloudflared` runs in a container, `localhost` is the container itself: connect it to the `coolify` network and use `http://coolify-proxy:80`.
-2. Turn off the HTTP → HTTPS redirect for the application in Coolify. Cloudflare already serves HTTPS and the tunnel talks plain HTTP to Coolify, so leaving it on causes `TOO_MANY_REDIRECTS`.
-
-## Environment variables
-
-Set in `servidor/.env` (see `servidor/.env.example`). Real environment variables take priority over the file.
-
-| Variable | Default | Description |
-|:--|:--|:--|
-| `PORT` | `3001` | Port the server listens on (all interfaces) |
-| `DB_HOST` | `localhost` | Database host |
-| `DB_PORT` | `3306` | Database port |
-| `DB_USER` | `root` | Database user |
-| `DB_PASSWORD` | *(empty)* | Database password |
-| `DB_NAME` | `dado-o-muerte` | Database name |
-
-The client also accepts an optional `REACT_APP_API_URL` (default: same origin) to point at an API on another host.
-
-## Tests
-
-```bash
-cd servidor && npm test    # node:test; integration tests need a database and are skipped if none is available
-cd cliente && npm test     # Jest + React Testing Library (watch mode)
-```
+`ronda` must match the game's current round, otherwise the server answers 409. A rematch is a new `POST /api/partidas` with the same names.
 
 ## Project structure
 
 ```
+.github/workflows/   CI: server tests with MySQL, client lint, tests and build, Docker image
 Dockerfile           production image (builds the client and runs the server)
 docker-compose.yaml  app + MySQL for Docker Compose / Coolify
+docs/                deployment guide and screenshots
 servidor/
-  index.js           entry point (prints LAN URLs)
-  app.js             Express app, routes, serves cliente/build
-  partidas.js        game logic and persistence
-  puntuacion.js      scoring function
+  index.js           entry point (prints LAN URLs, shuts down cleanly on SIGTERM)
+  app.js             Express app: rate limit, routes, serves cliente/build
+  partidas.js        game rules, validation and persistence
+  puntuacion.js      scoring
+  idPublico.js       random public game IDs
   config.js, db.js   configuration and MySQL pool
-  errores.js         HTTP error helpers
+  errores.js         HTTP errors with translatable codes
   db/                schema.sql, migracion-v1.sql, init.js
-  test/              api, scoring and db:init tests
+  test/              API (with MySQL), scoring, rate limit, IDs and db:init
 cliente/
+  index.html, vite.config.js, eslint.config.js
   src/
     pantallas/       screens: start, game, final
     componentes/     UI components (dice, hand, lives, turn, round summary...)
-    estilos/         CSS (tokens, base, and one file per screen)
     hooks/           turn state, saved game, player list
     lib/             scoring, rules and local storage helpers
-    slices/partida.js  Redux Toolkit slice for the game state
+    slices/          Redux Toolkit slice for the game state
+    idiomas/         translations (en, es)
+    estilos/         CSS (tokens, base, and one file per screen)
     api.js           API client
-    App.jsx          app root
 ```
 
-## API
+## License
 
-Base path `/api`. Everything is JSON; errors are `{ "error": "<message in Spanish>" }`. Every game endpoint returns the full game state (`EstadoPartida`).
-
-| Method | Path | Body | Success | Errors |
-|:--|:--|:--|:--|:--|
-| GET | `/api/health` | none | 200 `{ ok: true }` (checks the DB) | 500 |
-| POST | `/api/partidas` | `{ jugadores: string[] }` (2-8 unique names, 1-20 chars) | 201 `{ partida }` | 400 |
-| GET | `/api/partidas/:id` | none | 200 `EstadoPartida` | 400, 404 |
-| POST | `/api/partidas/:id/plantarse` | `{ jugadorId, ronda, dados: number[5], tiradas }` | 200 `{ partida, rondaTerminada }` | 400, 404, 409 |
-
-`ronda` must match the game's current round, otherwise the server answers 409; this protects against double taps. A rematch is simply a new `POST /api/partidas` with the same names.
+[MIT](LICENSE)

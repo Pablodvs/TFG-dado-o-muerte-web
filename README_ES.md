@@ -1,33 +1,54 @@
 # Dice or Die
 
-Un juego de dados para 2 a 8 jugadores que se juega pasándose un único móvil: tira, guarda dados, tira de farol y procura no quedarte con la peor jugada.
+[![CI](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml/badge.svg)](https://github.com/Pablodvs/TFG-dado-o-muerte-web/actions/workflows/ci.yml)
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](LICENSE)
 
-English version: [README.md](README.md)
+Un juego de dados para 2 a 8 jugadores que se juega pasándose un único móvil: tira cinco dados, guarda los buenos y procura no acabar la ronda con la peor jugada.
+
+**Juega en [dice-or-die.pablodiezdevelasco.com](https://dice-or-die.pablodiezdevelasco.com/)** · English version: [README.md](README.md)
+
+<p align="center">
+  <img src="docs/capturas/es-1-inicio.webp" width="200" alt="Pantalla de inicio con cuatro jugadores y una partida sin terminar">
+  <img src="docs/capturas/es-3c-turno-guardados.webp" width="200" alt="Un turno con dos seises guardados y la vista previa Trío de 6">
+  <img src="docs/capturas/es-4-resumen-ronda.webp" width="200" alt="Resumen de la ronda: Luis pierde una vida">
+  <img src="docs/capturas/es-5-final.webp" width="200" alt="Pantalla final con un castigo para quien pierde">
+</p>
+
+## Sobre el proyecto
+
+La versión 1 (junio de 2023) fue mi trabajo de fin de grado (TFG): una versión web del juego de dados con React, Express y MySQL. Se conserva en la etiqueta [`v1`](../../tree/v1). La versión 2 (2026) reescribe las dos partes:
+
+- una API REST que manda en las reglas, con transacciones, validación y códigos de error traducibles;
+- un cliente pensado para el móvil, con diseño propio, el flujo de pasar el móvil y en inglés y castellano;
+- tests en ambos lados, integración continua y una imagen Docker desplegada con Coolify.
 
 ## Características
 
 - Pantalla de "pasa el móvil" entre turnos, para que nadie vea los dados del siguiente.
 - Toca un dado para guardarlo o soltarlo.
-- Vista previa de la jugada mientras tiras ("Llevas: Trío de 5").
+- Vista previa de la jugada mientras tiras ("Llevas: Trío de 6"), y un aviso cuando perdería.
 - La jugada a superar (la peor de la ronda hasta el momento) siempre a la vista.
 - Resumen de ronda que indica quién pierde una vida y por qué.
-- La partida sobrevive a recargar la página (el estado se guarda en el servidor y en el navegador).
+- La partida sobrevive a recargar la página, incluso a mitad de un turno.
 - Revancha con los mismos jugadores.
 - En inglés y castellano: sale en inglés y se puede cambiar en cualquier momento desde la cabecera (la elección se recuerda).
+- Se puede instalar como una app (manifiesto web, pantalla completa, vertical).
 
 ## Cómo se juega
 
 - Cada jugador empieza con **3 vidas**. El primer jugador de la ronda 1 se elige al azar.
-- En tu turno tiras **5 dados**. Tras cada tirada puedes **guardar** los dados que quieras (no se vuelven a tirar) y repetir con el resto. Los dados guardados se pueden soltar de nuevo. No se puede guardar antes de la primera tirada.
-- El **primer jugador de cada ronda** puede tirar hasta 3 veces y puede plantarse cuando quiera. Las tiradas que haya usado pasan a ser el **límite de tiradas** para todos los demás en esa ronda.
+- En tu turno tiras **5 dados**. Tras cada tirada puedes **guardar** los dados que quieras (no se vuelven a tirar) y repetir con el resto. Los dados guardados se pueden soltar de nuevo.
+- El **primer jugador de cada ronda** puede tirar hasta 3 veces y plantarse cuando quiera. Las tiradas que haya usado pasan a ser el **límite de tiradas** para todos los demás en esa ronda.
 - Tu jugada final son **los 5 dados**, guardados o no, en el momento en que te plantas.
-- **Los 1 son comodines**: valen lo que más te convenga para tu grupo. La excepción es la escalera, que no admite comodines.
+- **Los 1 son comodines**: se suman a tu grupo más numeroso. La excepción es la escalera, que no admite comodines.
 - Las jugadas se ordenan primero por el tamaño del grupo de dados iguales (cuantos más, mejor) y después por su valor (cuanto más alto, mejor). La **escalera (2-3-4-5-6)** gana a todo.
 - Cuando todos han jugado, **la jugada más baja pierde una vida**. En caso de empate, **pierde quien jugó después**.
-- El perdedor de la ronda empieza la siguiente y los turnos siguen en orden a partir de él.
-- La partida termina cuando alguien llega a 0 vidas; ese jugador es el perdedor.
+- El perdedor de la ronda empieza la siguiente. La partida termina cuando alguien llega a 0 vidas.
 
-### Ejemplo 1
+<details>
+<summary>Ejemplos y tabla de jugadas</summary>
+
+**Ejemplo 1**
 
 | Jugador | Tirada | Jugada final |
 |:--|:--|:--|
@@ -38,7 +59,7 @@ English version: [README.md](README.md)
 
 Los jugadores 1 y 3 empatan con la jugada más baja, así que **pierde el jugador 3** por haber jugado después. La mejor jugada es la del jugador 2: agrupa cuatro dados y con un valor superior al del jugador 4.
 
-### Ejemplo 2
+**Ejemplo 2**
 
 | Jugador | Tirada | Jugada final |
 |:--|:--|:--|
@@ -49,7 +70,7 @@ Los jugadores 1 y 3 empatan con la jugada más baja, así que **pierde el jugado
 
 **Pierde el jugador 2**, que solo consiguió agrupar 2 dados. La mejor jugada es la escalera del jugador 4.
 
-### Tabla de jugadas (de menor a mayor)
+**Tabla de jugadas (de menor a mayor)**
 
 | Pareja | Trío | Póker | Repóker |
 |:--:|:--:|:--:|:--:|
@@ -59,29 +80,42 @@ Los jugadores 1 y 3 empatan con la jugada más baja, así que **pierde el jugado
 | 5 5 | 5 5 5 | 5 5 5 5 | 5 5 5 5 5 |
 | 6 6 | 6 6 6 | 6 6 6 6 | 6 6 6 6 6 |
 
-**La más alta: Escalera (2 3 4 5 6).** Internamente un grupo puntúa `tamaño * 10 + valor` (por ejemplo, un trío de 2 = 32) y la escalera puntúa 60.
+**La más alta: Escalera (2 3 4 5 6).** Internamente un grupo puntúa `tamaño * 10 + valor` (un trío de 2 = 32) y la escalera puntúa 60.
+
+</details>
 
 ## Tecnologías
 
-- **Cliente** (`cliente/`): React 18 + Redux Toolkit (Create React App), con i18next para las traducciones (`cliente/src/idiomas/`).
-- **Servidor** (`servidor/`): Express 5 + MySQL (`mysql2`). El servidor es quien manda en la puntuación y en los turnos.
+| | |
+|:--|:--|
+| Cliente | React 18, Redux Toolkit, React Router, i18next, Vite |
+| Servidor | Node 22, Express 5, MySQL 8 (`mysql2`), express-rate-limit |
+| Tests | Vitest y Testing Library (cliente), `node:test` contra un MySQL real (servidor) |
+| Herramientas | ESLint, GitHub Actions, Docker (multietapa), Docker Compose, Coolify |
+
+## Decisiones de diseño
+
+- **El servidor manda en las reglas.** La puntuación, el orden de turnos, el límite de tiradas de cada ronda y las vidas se deciden en `servidor/partidas.js`. Cada "plantarse" se hace en una transacción de MySQL que bloquea la partida (`SELECT … FOR UPDATE`), así que dos peticiones simultáneas se procesan una detrás de otra.
+- **Las dobles pulsaciones no hacen daño.** Cada petición de plantarse lleva el número de ronda. Una petición repetida llega cuando la ronda ya ha avanzado y recibe un 409, que el cliente resuelve recargando la partida en vez de mostrar un error.
+- **Los dados se tiran en el dispositivo.** Se juega en un solo móvil compartido, así que el cliente tira y el servidor valida lo que recibe: cinco valores del 1 al 6, de quién es el turno y cuántas tiradas se han usado. Alguien con las herramientas de desarrollo del navegador podría mandar una escalera; para jugar en línea, las tiradas pasarían al servidor.
+- **La puntuación está dos veces, y un test las compara.** El cliente puntúa la jugada mientras tiras, para la vista previa. Un test compara las implementaciones del cliente y del servidor con las 7.776 manos posibles.
+- **Recargar no regala tiradas.** El turno a medias se guarda en `localStorage` con una clave de partida, ronda y jugador, así que al recargar vuelven los dados y el número de tiradas.
+- **La API es pública, pero no se puede recorrer.** Las partidas se identifican con un id aleatorio de 128 bits (22 caracteres en base64url) en vez de 1, 2, 3…, y crear partidas tiene un límite por IP.
+- **Los errores se traducen.** Cada error de la API lleva un `codigo` estable; el cliente lo muestra en el idioma actual y, si no conoce el código, usa el mensaje del servidor.
+- **Accesibilidad.** Los dados son botones conmutables con `aria-pressed` y etiquetas leídas, el foco va a las preguntas de confirmación, el selector de idioma nombra cada idioma en ese idioma y las animaciones respetan `prefers-reduced-motion`.
 
 ## Puesta en marcha
 
-Requisitos: Node 18+ y MySQL 8 o MariaDB (por ejemplo con XAMPP).
-
-**¿No tienes MySQL?** Arranca uno con Docker antes de nada. Espera a que esté listo (20-30 segundos la primera vez; `docker logs dado-mysql` muestra "ready for connections"); si no, `db:init` falla con "Connection lost":
+Requisitos: Node 22.12+ y MySQL 8 (o MariaDB). Si no tienes MySQL, arranca uno con Docker:
 
 ```bash
 docker run -d --name dado-mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3307:3306 mysql:8
 ```
 
-Después, tras copiar el fichero `.env` en el paso siguiente, pon `DB_PORT=3307` en `servidor/.env`.
-
 ```bash
-cp servidor/.env.example servidor/.env      # con Docker: pon DB_PORT=3307 antes de db:init
+cp servidor/.env.example servidor/.env      # con el contenedor de arriba, pon DB_PORT=3307
 cd servidor && npm install
-npm run db:init                             # crea la base de datos y las tablas
+npm run db:init -- --esperar                # crea la base de datos y las tablas (espera a que MySQL arranque)
 cd ../cliente && npm install
 ```
 
@@ -89,134 +123,77 @@ Después arranca ambas partes en dos terminales:
 
 ```bash
 cd servidor && npm run dev      # API en http://localhost:3001
-cd cliente && npm start         # aplicación en http://localhost:3000
+cd cliente && npm run dev       # aplicación en http://localhost:3000 (redirige /api al 3001)
 ```
 
-El servidor de desarrollo del cliente redirige `/api` al puerto 3001 (campo `proxy` de `cliente/package.json`).
-
-**¿Vienes de la v1?** Ejecuta la migración una sola vez sobre tu base de datos actual. Las partidas y jugadores existentes se conservan:
+### Tests y lint
 
 ```bash
-cd servidor && npm run db:init -- db/migracion-v1.sql
+cd servidor && npm test          # node:test; los tests de la API necesitan base de datos y se omiten si no hay
+cd cliente && npm test -- --run  # Vitest (sin --run se queda en modo watch)
+cd cliente && npm run lint       # ESLint
 ```
 
-## Jugar desde el móvil
+GitHub Actions los ejecuta todos en cada push y pull request, con un MySQL de servicio, y además compila la imagen Docker.
 
-Todo el juego se hace en un solo móvil que se van pasando. Tu ordenador hace de anfitrión y el móvil debe estar en la misma wifi.
+### Jugar desde el móvil
 
-**Modo producción** (recomendado):
+Compila el cliente y arranca el servidor; sirve `cliente/build` e imprime todas las direcciones de red que encuentra:
 
 ```bash
 cd cliente && npm run build
 cd ../servidor && npm start
 ```
 
-El servidor sirve `cliente/build` automáticamente e imprime todas las direcciones de red que encuentra, incluidas las de Docker o VPN. Usa la de tu wifi/red local (normalmente `192.168.x.x` o `10.x.x.x`), por ejemplo `http://192.168.1.20:3001`, y ábrela en el móvil.
+Abre la dirección de la wifi de tu ordenador (por ejemplo `http://192.168.1.20:3001`) en un móvil de la misma red. No uses `localhost` en el móvil, y comprueba que el cortafuegos deja pasar el puerto 3001.
 
-**Modo desarrollo:** con los dos servidores en marcha, abre `http://<ip-de-tu-pc>:3000` en el móvil.
+## Despliegue
 
-Si no funciona:
+El `Dockerfile` compila el cliente y arranca el servidor, que sirve la API y la aplicación en el puerto 3001. `docker-compose.yaml` añade su propio MySQL. Al arrancar, el contenedor crea o pone al día las tablas. [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md) explica Docker, Docker Compose, Coolify, Cloudflare Tunnel, las variables de entorno y `TRUST_PROXY` para el límite por IP detrás de proxies.
 
-- No uses `localhost` en el móvil: apunta al propio móvil. Usa la IP local de tu ordenador.
-- El cortafuegos debe permitir conexiones entrantes en el puerto (3001, o 3000 en desarrollo).
-- Ambos dispositivos deben estar en la misma red.
-- La aplicación incluye un manifiesto web (pantalla completa, vertical), así que se puede instalar como una app: en iOS Safari, Compartir y después Añadir a pantalla de inicio; en Android Chrome, menú y después Instalar aplicación / Añadir a pantalla de inicio.
+## API
 
-## Despliegue con Docker / Coolify
+Ruta base `/api`. Todo es JSON. Los errores tienen la forma `{ "error": "<mensaje en español>", "codigo": "<código estable>" }`, y el cliente los traduce por su `codigo`. Todos los endpoints de partida devuelven el estado completo (`EstadoPartida`), cuyo `id` es el id público de la partida.
 
-El `Dockerfile` de la raíz compila el cliente y arranca el servidor, que sirve la API y la aplicación en el puerto 3001. Al arrancar crea las tablas si no existen (se puede repetir sin problema) y espera hasta un minuto a que MySQL esté listo. `docker-compose.yaml` lo arranca junto con su propio MySQL.
+| Método | Ruta | Cuerpo | Éxito | Errores |
+|:--|:--|:--|:--|:--|
+| GET | `/api/health` | ninguno | 200 `{ ok: true }` (comprueba la base de datos) | 503 |
+| POST | `/api/partidas` | `{ jugadores: string[] }` (2-8 nombres únicos, 1-20 caracteres) | 201 `{ partida }` | 400, 429 |
+| GET | `/api/partidas/:id` | ninguno | 200 `EstadoPartida` | 400, 404 |
+| POST | `/api/partidas/:id/plantarse` | `{ jugadorId, ronda, dados: number[5], tiradas }` | 200 `{ partida, rondaTerminada }` | 400, 404, 409 |
 
-**Docker Compose** (la aplicación y MySQL juntos): pon `DB_PASSWORD=<contraseña>` en un fichero `.env` junto a `docker-compose.yaml`. `DB_USER` y `DB_NAME` valen por defecto `dado` y `dado-o-muerte`, y los datos se guardan en el volumen `mysql-datos`. El compose no publica ningún puerto (en Coolify llega el proxy), así que para abrirlo en local en `http://localhost:3001` crea a su lado un `docker-compose.override.yaml`, que Compose carga solo:
-
-```yaml
-services:
-  app:
-    ports:
-      - "3001:3001"
-```
-
-```bash
-docker compose up -d --build
-```
-
-**Solo la imagen**, con tu propio MySQL:
-
-```bash
-docker build -t dado-o-muerte .
-docker run -p 3001:3001 -e DB_HOST=<host-mysql> -e DB_USER=<usuario> -e DB_PASSWORD=<contraseña> -e DB_NAME=<base-de-datos> dado-o-muerte
-```
-
-**Coolify**, de una de estas dos formas:
-
-- **Build pack Docker Compose** (la aplicación y MySQL en un solo recurso): crea una aplicación a partir de este repositorio con el build pack **Docker Compose**, pon `DB_PASSWORD` en Environment Variables (no hace falta para compilar, así que puede ser una variable solo de runtime) y asigna al servicio `app` un dominio con su puerto interno, por ejemplo `https://dado.ejemplo.com:3001`. Las copias de seguridad programadas de Coolify están pensadas para los recursos de base de datos independientes: comprueba si te las ofrece para este MySQL o haz tú las del volumen `mysql-datos`.
-- **Build pack Dockerfile** con una base de datos aparte:
-  1. Crea un recurso **MySQL 8** (no necesita acceso público) y apunta su host interno, usuario, contraseña y base de datos.
-  2. Crea una aplicación a partir de este repositorio con el build pack **Dockerfile** y **Ports Exposes** a `3001`.
-  3. Añade las variables `DB_HOST` (el host interno de la base de datos), `DB_PORT` (`3306`), `DB_USER`, `DB_PASSWORD` y `DB_NAME`.
-  4. Pon el dominio, por ejemplo `https://dado.ejemplo.com`. La imagen ya trae un health check sobre `/api/health`.
-
-**Cloudflare Tunnel** (en los dos casos):
-
-1. Añade al túnel un public hostname con ese dominio y el servicio `http://localhost:80` (el proxy de Coolify). Si `cloudflared` corre en un contenedor, `localhost` es el propio contenedor: conéctalo a la red `coolify` y usa `http://coolify-proxy:80`.
-2. Desactiva en Coolify la redirección de HTTP a HTTPS de la aplicación. El HTTPS ya lo pone Cloudflare y el túnel habla HTTP con Coolify, así que si la dejas activa obtendrás `TOO_MANY_REDIRECTS`.
-
-## Variables de entorno
-
-Se definen en `servidor/.env` (ver `servidor/.env.example`). Las variables de entorno reales tienen prioridad sobre el fichero.
-
-| Variable | Valor por defecto | Descripción |
-|:--|:--|:--|
-| `PORT` | `3001` | Puerto en el que escucha el servidor (todas las interfaces) |
-| `DB_HOST` | `localhost` | Host de la base de datos |
-| `DB_PORT` | `3306` | Puerto de la base de datos |
-| `DB_USER` | `root` | Usuario de la base de datos |
-| `DB_PASSWORD` | *(vacía)* | Contraseña de la base de datos |
-| `DB_NAME` | `dado-o-muerte` | Nombre de la base de datos |
-
-El cliente admite además `REACT_APP_API_URL` (opcional, por defecto el mismo origen) para apuntar a una API en otro host.
-
-## Tests
-
-```bash
-cd servidor && npm test    # node:test; los tests de integración necesitan base de datos y se omiten si no hay
-cd cliente && npm test     # Jest + React Testing Library (modo watch)
-```
+`ronda` debe coincidir con la ronda actual de la partida; si no, el servidor responde 409. La revancha es un nuevo `POST /api/partidas` con los mismos nombres.
 
 ## Estructura del proyecto
 
 ```
+.github/workflows/   CI: tests del servidor con MySQL; lint, tests y build del cliente; imagen Docker
 Dockerfile           imagen de producción (compila el cliente y arranca el servidor)
 docker-compose.yaml  aplicación + MySQL para Docker Compose / Coolify
+docs/                guía de despliegue y capturas
 servidor/
-  index.js           punto de entrada (muestra las URL de red local)
-  app.js             aplicación Express, rutas, sirve cliente/build
-  partidas.js        lógica de partida y persistencia
-  puntuacion.js      función de puntuación
+  index.js           punto de entrada (muestra las URL de red local, se cierra limpio con SIGTERM)
+  app.js             aplicación Express: límite por IP, rutas, sirve cliente/build
+  partidas.js        reglas, validación y persistencia de las partidas
+  puntuacion.js      puntuación
+  idPublico.js       ids públicos aleatorios de partida
   config.js, db.js   configuración y pool de MySQL
-  errores.js         utilidades de errores HTTP
+  errores.js         errores HTTP con códigos traducibles
   db/                schema.sql, migracion-v1.sql, init.js
-  test/              tests de la API, de la puntuación y de db:init
+  test/              API (con MySQL), puntuación, límite, ids y db:init
 cliente/
+  index.html, vite.config.js, eslint.config.js
   src/
     pantallas/       pantallas: inicio, partida y final
     componentes/     componentes de la interfaz (dados, jugada, vidas, turno, resumen de ronda...)
-    estilos/         CSS (tokens, base y un fichero por pantalla)
     hooks/           estado del turno, partida guardada, lista de jugadores
     lib/             puntuación, reglas y almacenamiento local
-    slices/partida.js  slice de Redux Toolkit con el estado de la partida
+    slices/          slice de Redux Toolkit con el estado de la partida
+    idiomas/         traducciones (en, es)
+    estilos/         CSS (tokens, base y un fichero por pantalla)
     api.js           cliente de la API
-    App.jsx          raíz de la aplicación
 ```
 
-## API
+## Licencia
 
-Ruta base `/api`. Todo es JSON; los errores tienen la forma `{ "error": "<mensaje en español>" }`. Todos los endpoints de partida devuelven el estado completo (`EstadoPartida`).
-
-| Método | Ruta | Cuerpo | Éxito | Errores |
-|:--|:--|:--|:--|:--|
-| GET | `/api/health` | ninguno | 200 `{ ok: true }` (comprueba la BD) | 500 |
-| POST | `/api/partidas` | `{ jugadores: string[] }` (2-8 nombres únicos, 1-20 caracteres) | 201 `{ partida }` | 400 |
-| GET | `/api/partidas/:id` | ninguno | 200 `EstadoPartida` | 400, 404 |
-| POST | `/api/partidas/:id/plantarse` | `{ jugadorId, ronda, dados: number[5], tiradas }` | 200 `{ partida, rondaTerminada }` | 400, 404, 409 |
-
-`ronda` debe coincidir con la ronda actual de la partida; si no, el servidor responde 409 (protege frente a dobles pulsaciones). La revancha es simplemente un nuevo `POST /api/partidas` con los mismos nombres.
+[MIT](LICENSE)
